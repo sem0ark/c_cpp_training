@@ -17,6 +17,8 @@ typedef struct {
 
 	t_vec3f surface_color;
 	t_vec3f emission_color;
+	t_vec3f center;
+
 	float transparency;
 	float reflection;
 } t_object_common;
@@ -26,10 +28,10 @@ typedef struct {
 
 	t_vec3f surface_color;
 	t_vec3f emission_color;
+	t_vec3f center;
 	float transparency;
 	float reflection;
 
-	t_vec3f center;
 	float radius;
 } t_sphere;
 

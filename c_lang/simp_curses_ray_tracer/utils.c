@@ -50,3 +50,16 @@ char *repr_vec3f(t_vec3f a) {
 float mix(float a, float b, float mix) {
 	return b*mix + a*(1-mix);
 }
+
+t_vec3f reflect(t_vec3f ray_dir, t_vec3f norm) {
+	return normalize_vec3f(diff_vec3f(ray_dir, mul_vec3f_f(norm, dot_vec3f(ray_dir, norm)*2)));
+}
+
+t_vec3f refract(t_vec3f ray_dir, t_vec3f norm, float eta) {
+	float cosi = -dot_vec3f(norm, ray_dir);
+	float k = 1 - eta * eta * (1 - cosi*cosi);
+	return normalize_vec3f(sum_vec3f(
+				mul_vec3f_f(ray_dir, eta),
+				mul_vec3f_f(norm, eta*cosi-sqrt(k))));
+}
+

@@ -47,6 +47,10 @@ float len_sq_vec3f(t_vec3f a);
 float len_vec3f(t_vec3f a);
 /* Return string repr of vector (for debug) */
 char *repr_vec3f(t_vec3f a);
+/* Calculate direction vector of reflection */
+t_vec3f reflect(t_vec3f ray_dir, t_vec3f norm);
+/* Calculate direction vector of refraction */
+t_vec3f refract(t_vec3f ray_dir, t_vec3f norm, float eta);
 
 #endif /* UTILS_H */
 
