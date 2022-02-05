@@ -1,5 +1,9 @@
+#include <math.h>
+
 #ifndef UTILS_H
 #define UTILS_H
+
+
 
 #ifndef INFINITY
 #define INFINITY 1e8
@@ -18,7 +22,6 @@ typedef struct {
 typedef struct {
 	t_vec3f origin;
 	t_vec3f direction;
-	t_vec3f color;
 } t_ray;
 
 

@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "utils.h"
 
 #ifndef OBJECT_H

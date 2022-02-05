@@ -4,11 +4,12 @@
 
 #include "utils.h"
 #include "object.h"
+#include "camera.h"
 
 #define MAX_RAY_DEPTH 3
 
-t_object** objects;
-int objects_num;
+t_object** objects = NULL;
+size_t objects_num;
 
 const float bias = 1e-4;
 
@@ -42,20 +43,18 @@ t_vec3f trace(t_ray *ray, int depth) {
 		float frensel_effect = mix(pow(1 - facing_ratio, 3), 1, 0.1);
 		t_ray refl_ray = (t_ray) {
 				sum_vec3f(p_hit, mul_vec3f_f(n_hit, bias)),
-				reflect(ray->direction, n_hit),
-				ray->color};
+				reflect(ray->direction, n_hit)};
 
 		t_vec3f reflection = trace(&refl_ray, depth+1);
 		t_vec3f refraction = (t_vec3f){0};
 
-		// TODO: understand what is it!
+		// TODO: understand what is it ?!
 		if (b_object->com.transparency) {
 			float ior = 1.1; //  (index of refraction?)
 			float eta = (inside) ? ior : 1 / ior; // Are we inside of object?
 			t_ray refr_ray = (t_ray){
 					diff_vec3f(p_hit, mul_vec3f_f(n_hit, bias)),
-					refract(ray->direction, n_hit, eta),
-					ray->color};
+					refract(ray->direction, n_hit, eta)};
 
 			refraction = trace(&refr_ray, depth + 1);
 		}
@@ -74,9 +73,7 @@ t_vec3f trace(t_ray *ray, int depth) {
 				t_vec3f transmission = {1, 1, 1};
 				t_ray emission_ray = (t_ray) {p_hit,
 					normalize_vec3f(
-							diff_vec3f(objects[i]->com.center, p_hit)),
-					(t_vec3f){0}
-				};
+							diff_vec3f(objects[i]->com.center, p_hit))};
 
 				if (dot_vec3f(n_hit, emission_ray.direction) <= 0) continue;
 
@@ -106,16 +103,46 @@ t_vec3f trace(t_ray *ray, int depth) {
 	return sum_vec3f(surf_color, b_object->com.emission_color);
 }
 
-t_vec3f** trace_all(const int image_width, const int image_height) {
+t_vec3f v3f(float x, float y, float z) {
+	return (t_vec3f) {x, y, z};
+}
+
+t_object o_sphere(t_vec3f sr_col, t_vec3f em_col, t_vec3f c, float trp, float rfl, float r) {
+	t_object obj = {.o_sphr = (t_sphere) {
+				SPHERE,
+				sr_col,
+				em_col,
+				c, trp, rfl, r
+	}};
+	return obj;
+}
+
+// finish render function
+t_vec3f** render(const int image_width,
+								 const int image_height,
+								 t_camera camera,
+								 t_object** objs,
+								 const size_t objs_size) {
+	objects = objs;
+	objects_num = objs_size;
+
+	int N = 1;
+	objects = (t_object**)malloc(sizeof(t_object*) * 3);
+	for (int i=0; i<N; i++) {
+		objects[i] = (t_object*)malloc(sizeof(t_object) * 1);
+	}
+
+	*objects[0] = o_sphere(v3f(0,0,0),v3f(0,0,0), v3f(1.0,1.0,1.0), 0.0, 0.0, 10);
+
+
 	t_vec3f **pixels = malloc(image_width * sizeof(t_vec3f*));
 	for (int i=0; i<image_width; i++) {
 		pixels[i] = malloc(image_height * sizeof(t_vec3f));
 	}
-
+	float inv_w=1/(float)image_width, inv_h=1/(float)image_height;
 	for (int j=0; j<image_height; j++) {
 		for (int i=0; i<image_width; i++) {
-			t_ray prim_ray;
-//			compute_prim_ray(i, j, &prim_ray);
+			t_ray prim_ray = get_ray(&camera, inv_w, inv_h, i, j);
 			pixels[i][j] = trace(&prim_ray, 0);
 		}
 	}

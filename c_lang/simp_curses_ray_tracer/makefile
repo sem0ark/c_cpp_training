@@ -2,22 +2,22 @@ CC = gcc
 
 CFLG = -g -Wall -Wextra
 IFLG = -I.
-LFLG = ''
+LFLG = -lm
 
-TARGET = ray_tracer.exe
+TARGET = ray_tracer
 
-HDR = utils.h ray_tracer.h object.h screen.h
+HDR = utils.h ray_tracer.h object.h screen.h camera.h
 # headers
-SRC = main.c object.c utils.c screen.c ray_tracer.c
+SRC = main.c object.c utils.c screen.c ray_tracer.c camera.c
 # source files
 
-OBJ = $(SRC:.c:.o)
+OBJ = $(SRC:.c=.o)
 
 %.o: %.c $(HDR)
 	$(CC) -c -o $@ $< $(CFLG) $(IFLG) $(LFLG)
 
 $(TARGET): $(OBJ)
-	$(CC) -o $(TARGET) $(OBJ) $(CFLG) $(IFLG) $(LFLG)
+	$(CC) -o $(TARGET) $^ $(CFLG) $(IFLG) $(LFLG)
 
 run: $(TARGET)
 	./$(TARGET)

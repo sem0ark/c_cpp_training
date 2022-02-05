@@ -12,7 +12,7 @@ int intersect_sphere(t_sphere sp, t_ray *ray, float *intsct_coef) {
 	float d2 = len_sq_vec3f(l) - tca*tca;
 	float r2 = sp.radius * sp.radius;
 	if (d2 > r2) return 0;
-	float thc = (float) sqrt(r2 - d2);
+	float thc = sqrt(r2 - d2);
 	float t = 0;
 	if (tca > thc) { *intsct_coef = tca - thc; }
 	else 					 { *intsct_coef = tca + thc; }
