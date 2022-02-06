@@ -132,7 +132,7 @@ void test_raytracer(void) {
 	*objects[1] = (object_t){
 		.o_sphr = {
 			SPHERE,
-			v3f(1,1,1),
+			v3f(0.9,0.9,1),
 			v3f(0,0,0),
 			v3f(0.8,0,2),
 			1,

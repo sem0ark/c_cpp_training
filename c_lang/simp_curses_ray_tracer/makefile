@@ -4,7 +4,7 @@ CFLG = -g -Wall -Wextra
 IFLG = -I.
 LFLG = -lm
 
-TARGET = ray_tracer
+TARGET = ray_tracer.exe
 
 HDR = utils.h camera.h screen.h object.h ray_tracer.h
 # headers

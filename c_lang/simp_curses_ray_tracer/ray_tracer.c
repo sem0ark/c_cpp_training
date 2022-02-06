@@ -53,7 +53,7 @@ V3f_t trace(ray_t *ray, int depth, object_t** objects, int objects_num) {
 
 		// TODO: understand what is it ?!
 		if (b_object->com.transparency > 0) {
-			float ior = 1.2; //  (index of refraction?)
+			float ior = 1.52; //  (index of refraction?)
 			float eta = (inside) ? ior : 1 / ior; // Are we inside of object?
 			ray_t refr_ray = (ray_t){
 					diff_v3(p_hit, mul_v3_f(n_hit, bias)),
