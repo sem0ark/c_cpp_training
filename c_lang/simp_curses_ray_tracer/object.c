@@ -43,7 +43,7 @@ int intersect(object_t *obj, ray_t *ray, float *intsct_coef) {
 
 
 V3f_t compute_normal_sphere(object_t *obj, V3f_t *p_hit) {
-	return (V3f_t){0};
+	return normalize_v3(diff_v3(*p_hit, obj->o_sphr.center));
 }
 
 V3f_t compute_normal_cube(object_t *obj, V3f_t *p_hit) {

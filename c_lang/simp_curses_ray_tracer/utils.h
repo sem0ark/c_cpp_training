@@ -55,5 +55,7 @@ V3f_t reflect(V3f_t ray_dir, V3f_t norm);
 /* Calculate direction vector of refraction */
 V3f_t refract(V3f_t ray_dir, V3f_t norm, float eta);
 
+void sv(V3f_t *);
+
 #endif /* UTILS_H */
 

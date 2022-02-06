@@ -52,8 +52,9 @@ typedef union {
 	torus_t o_trs;
 } object_t;
 
-
+/* computes intersection coef for object */
 int intersect(object_t *obj, ray_t *ray, float *intsct_coef);
+/* computes normal form point on surface of object */
 V3f_t compute_normal(object_t *obj, V3f_t *p_hit);
 
 #endif

@@ -47,7 +47,7 @@ float len_v3(V3f_t a) {
 
 char repr_res[50];
 char *repr_v3(V3f_t a) {
-	sprintf(repr_res, "%.3f %.3f %.3f", a.x, a.y, a.z);
+	sprintf(repr_res, "%.6f %.6f %.6f", a.x, a.y, a.z);
 	return repr_res;
 }
 
@@ -67,3 +67,6 @@ V3f_t refract(V3f_t ray_dir, V3f_t norm, float eta) {
 				mul_v3_f(norm, eta*cosi-sqrt(k))));
 }
 
+void sv(V3f_t *a) {
+	printf("%s\n", repr_v3(*a));
+}
