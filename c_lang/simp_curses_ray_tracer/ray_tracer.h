@@ -6,11 +6,11 @@
 #include "object.h"
 #include "camera.h"
 
-t_vec3f trace(t_ray *ray, int depth);
-t_vec3f** render(const int image_width,
+V3f_t trace(ray_t *ray, int depth);
+V3f_t** render(const int image_width,
 								 const int image_height,
-								 t_camera camera,
-								 t_object** objs,
+								 camera_t camera,
+								 object_t** objs,
 								 const size_t objs_size);
 
 #endif /* RAY_CASTER */

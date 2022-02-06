@@ -16,44 +16,44 @@
 /* Vector 3d struct float type */
 typedef struct {
 	float x, y, z;
-} t_vec3f;
+} V3f_t;
 
 /* compound struct type Ray */
 typedef struct {
-	t_vec3f origin;
-	t_vec3f direction;
-} t_ray;
+	V3f_t origin;
+	V3f_t direction;
+} ray_t;
 
-
-
+/* create vector*/
+V3f_t v3f(float x, float y, float z);
 /* Sum of two vectors (a+b) */
-t_vec3f sum_vec3f(t_vec3f a, t_vec3f b);
+V3f_t sum_v3(V3f_t a, V3f_t b);
 /* Substraction between two vectors (a-b) */
-t_vec3f diff_vec3f(t_vec3f a, t_vec3f b);
+V3f_t diff_v3(V3f_t a, V3f_t b);
 
 /* Mult vector by scalar (a*f) */
-t_vec3f mul_vec3f_f(t_vec3f a, float f);
+V3f_t mul_v3_f(V3f_t a, float f);
 /* Mult vector coord by diff values <ax*bx, ay*by, az*bz> */
-t_vec3f mul_vec3f_v(t_vec3f a, t_vec3f b);
+V3f_t mul_v3_v(V3f_t a, V3f_t b);
 /* Mult vector by -1 (-a) */
-t_vec3f neg_vec3f(t_vec3f a);
+V3f_t neg_v3(V3f_t a);
 /* Changes length of vector to 1 */
-t_vec3f normalize_vec3f(t_vec3f a);
+V3f_t normalize_v3(V3f_t a);
 /* Mixes to values */
 float mix(float a, float b, float mix);
 
 /* Dot product of two vectors (a . b) */
-float dot_vec3f(t_vec3f a, t_vec3f b);
+float dot_v3(V3f_t a, V3f_t b);
 /* Sqare length of vector (|a|^2) */
-float len_sq_vec3f(t_vec3f a);
+float len_sq_v3(V3f_t a);
 /* Length of vector (|a|) */
-float len_vec3f(t_vec3f a);
+float len_v3(V3f_t a);
 /* Return string repr of vector (for debug) */
-char *repr_vec3f(t_vec3f a);
+char *repr_v3(V3f_t a);
 /* Calculate direction vector of reflection */
-t_vec3f reflect(t_vec3f ray_dir, t_vec3f norm);
+V3f_t reflect(V3f_t ray_dir, V3f_t norm);
 /* Calculate direction vector of refraction */
-t_vec3f refract(t_vec3f ray_dir, t_vec3f norm, float eta);
+V3f_t refract(V3f_t ray_dir, V3f_t norm, float eta);
 
 #endif /* UTILS_H */
 

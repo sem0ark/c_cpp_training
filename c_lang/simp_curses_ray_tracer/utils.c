@@ -5,61 +5,65 @@
 #include "utils.h"
 
 
-t_vec3f sum_vec3f(t_vec3f a, t_vec3f b) {
-	return (t_vec3f){a.x+b.x, a.y+b.y, a.z+b.z};
+V3f_t v3f(float x, float y, float z) {
+	return (V3f_t) {x, y, z};
 }
 
-t_vec3f diff_vec3f(t_vec3f a, t_vec3f b) {
-	return (t_vec3f){a.x+b.x, a.y+b.y, a.z+b.z};
+V3f_t sum_v3(V3f_t a, V3f_t b) {
+	return (V3f_t){a.x+b.x, a.y+b.y, a.z+b.z};
 }
 
-t_vec3f mul_vec3f_f(t_vec3f a, float f) {
-	 return (t_vec3f){a.x*f, a.y*f, a.z*f};
+V3f_t diff_v3(V3f_t a, V3f_t b) {
+	return (V3f_t){a.x-b.x, a.y-b.y, a.z-b.z};
 }
 
-t_vec3f mul_vec3f_v(t_vec3f a, t_vec3f b) {
-	 return (t_vec3f){a.x*b.x, a.y*b.y, a.z*b.z};
+V3f_t mul_v3_f(V3f_t a, float f) {
+	 return (V3f_t){a.x*f, a.y*f, a.z*f};
 }
 
-t_vec3f neg_vec3f(t_vec3f a) {
-	return (t_vec3f){-a.x, -a.y, -a.z};
+V3f_t mul_v3_v(V3f_t a, V3f_t b) {
+	 return (V3f_t){a.x*b.x, a.y*b.y, a.z*b.z};
 }
 
-t_vec3f normalize_vec3f(t_vec3f a) {
-	return mul_vec3f_f(a, 1/len_vec3f(a));
+V3f_t neg_v3(V3f_t a) {
+	return (V3f_t){-a.x, -a.y, -a.z};
 }
 
-float dot_vec3f(t_vec3f a, t_vec3f b) {
+V3f_t normalize_v3(V3f_t a) {
+	return mul_v3_f(a, 1/len_v3(a));
+}
+
+float dot_v3(V3f_t a, V3f_t b) {
 	return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
-float len_sq_vec3f(t_vec3f a) {
-	return a.x*a.x + a.y+a.y + a.z+a.z;
+float len_sq_v3(V3f_t a) {
+	return a.x*a.x + a.y*a.y + a.z*a.z;
 }
 
-float len_vec3f(t_vec3f a) {
-	return sqrt(len_sq_vec3f(a));
+float len_v3(V3f_t a) {
+	return sqrt(len_sq_v3(a));
 }
 
-char *repr_vec3f(t_vec3f a) {
-	char *res = (char*)malloc(50 * sizeof(char));
-	sprintf(res, "%.6f %.6f %.6f", a.x, a.y, a.z);
-	return res;
+char repr_res[50];
+char *repr_v3(V3f_t a) {
+	sprintf(repr_res, "%.3f %.3f %.3f", a.x, a.y, a.z);
+	return repr_res;
 }
 
 float mix(float a, float b, float mix) {
 	return b*mix + a*(1-mix);
 }
 
-t_vec3f reflect(t_vec3f ray_dir, t_vec3f norm) {
-	return normalize_vec3f(diff_vec3f(ray_dir, mul_vec3f_f(norm, dot_vec3f(ray_dir, norm)*2)));
+V3f_t reflect(V3f_t ray_dir, V3f_t norm) {
+	return normalize_v3(diff_v3(ray_dir, mul_v3_f(norm, dot_v3(ray_dir, norm)*2)));
 }
 
-t_vec3f refract(t_vec3f ray_dir, t_vec3f norm, float eta) {
-	float cosi = -dot_vec3f(norm, ray_dir);
+V3f_t refract(V3f_t ray_dir, V3f_t norm, float eta) {
+	float cosi = -dot_v3(norm, ray_dir);
 	float k = 1 - eta * eta * (1 - cosi*cosi);
-	return normalize_vec3f(sum_vec3f(
-				mul_vec3f_f(ray_dir, eta),
-				mul_vec3f_f(norm, eta*cosi-sqrt(k))));
+	return normalize_v3(sum_v3(
+				mul_v3_f(ray_dir, eta),
+				mul_v3_f(norm, eta*cosi-sqrt(k))));
 }
 

@@ -6,9 +6,9 @@ LFLG = -lm
 
 TARGET = ray_tracer
 
-HDR = utils.h ray_tracer.h object.h screen.h camera.h
+HDR = utils.h camera.h screen.h object.h ray_tracer.h
 # headers
-SRC = main.c object.c utils.c screen.c ray_tracer.c camera.c
+SRC = test.c utils.c camera.c ray_tracer.c object.c main.c screen.c
 # source files
 
 OBJ = $(SRC:.c=.o)

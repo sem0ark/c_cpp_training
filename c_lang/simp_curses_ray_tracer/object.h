@@ -17,43 +17,43 @@ enum OBJECT_TYPE{
 typedef struct {
 	enum OBJECT_TYPE type;
 
-	t_vec3f surface_color;
-	t_vec3f emission_color;
-	t_vec3f center;
+	V3f_t surface_color;
+	V3f_t emission_color;
+	V3f_t center;
 
 	float transparency;
 	float reflection;
-} t_object_common;
+} object_common_t;
 
 typedef struct {
 	enum OBJECT_TYPE type;
 
-	t_vec3f surface_color;
-	t_vec3f emission_color;
-	t_vec3f center;
+	V3f_t surface_color;
+	V3f_t emission_color;
+	V3f_t center;
 	float transparency;
 	float reflection;
 
 	float radius;
-} t_sphere;
+} sphere_t;
 
 typedef struct {
 	enum OBJECT_TYPE type;
-} t_cube;
+} cube_t;
 
 typedef struct {
 	enum OBJECT_TYPE type;
-} t_torus;
+} torus_t;
 
 typedef union {
-	t_object_common com;
-	t_sphere o_sphr;
-	t_cube o_cb;
-	t_torus o_trs;
-} t_object;
+	object_common_t com;
+	sphere_t o_sphr;
+	cube_t o_cb;
+	torus_t o_trs;
+} object_t;
 
 
-int intersect(t_object *obj, t_ray *ray, float *intsct_coef);
-t_vec3f compute_normal(t_object *obj, t_vec3f *p_hit);
+int intersect(object_t *obj, ray_t *ray, float *intsct_coef);
+V3f_t compute_normal(object_t *obj, V3f_t *p_hit);
 
 #endif

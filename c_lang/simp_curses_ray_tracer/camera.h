@@ -4,11 +4,11 @@
 #include "utils.h"
 
 typedef struct {
-	t_vec3f positon;
-	t_vec3f rotation;
+	V3f_t positon;
+	V3f_t rotation;
 	float fov;
-} t_camera;
-
-t_ray get_ray(t_camera *cam, float inv_w, float inv_h, int x, int y);
+} camera_t;
+/* returns ray from camera */
+void get_ray(camera_t *cam, float inv_w, float inv_h, int x, int y, ray_t *ray);
 
 #endif

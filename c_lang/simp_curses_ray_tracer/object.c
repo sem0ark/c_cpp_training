@@ -5,12 +5,12 @@
 
 
 
-int intersect_sphere(t_sphere sp, t_ray *ray, float *intsct_coef) {
-	t_vec3f l = diff_vec3f(sp.center, ray->origin);
-	float tca = dot_vec3f(l, ray->direction);
+int intersect_sphere(object_t *obj, ray_t *ray, float *intsct_coef) {
+	V3f_t l = diff_v3(obj->o_sphr.center, ray->origin);
+	float tca = dot_v3(l, ray->direction);
 	if (tca < 0) return 0;
-	float d2 = len_sq_vec3f(l) - tca*tca;
-	float r2 = sp.radius * sp.radius;
+	float d2 = len_sq_v3(l) - tca*tca;
+	float r2 = obj->o_sphr.radius * obj->o_sphr.radius;
 	if (d2 > r2) return 0;
 	float thc = sqrt(r2 - d2);
 	float t = 0;
@@ -21,51 +21,51 @@ int intersect_sphere(t_sphere sp, t_ray *ray, float *intsct_coef) {
 
 
 /* Not implemented */
-int intersect_cube(t_cube cb, t_ray *ray, float *intsct_coef) {return 0;}
+int intersect_cube(object_t *obj, ray_t *ray, float *intsct_coef) {return 0;}
 
 /* Not implemented */
-int intersect_torus(t_torus tr, t_ray *ray, float *intsct_coef) {return 0;}
+int intersect_torus(object_t *obj, ray_t *ray, float *intsct_coef) {return 0;}
 
 
 
-int intersect(t_object *obj, t_ray *ray, float *intsct_coef) {
+int intersect(object_t *obj, ray_t *ray, float *intsct_coef) {
 	switch (obj->com.type) {
 		case SPHERE:
-			return intersect_sphere(obj->o_sphr, ray, intsct_coef);
+			return intersect_sphere(obj, ray, intsct_coef);
 		case CUBE:
-			return  intersect_cube(obj->o_cb, ray, intsct_coef);
+			return  intersect_cube(obj, ray, intsct_coef);
 		case TORUS:
-			return intersect_torus(obj->o_trs, ray, intsct_coef);
+			return intersect_torus(obj, ray, intsct_coef);
 		default:
 			return 0;
 	};
 }
 
 
-t_vec3f compute_normal_sphere(t_sphere sp, t_vec3f *p_hit) {
-	return (t_vec3f){0};
+V3f_t compute_normal_sphere(object_t *obj, V3f_t *p_hit) {
+	return (V3f_t){0};
 }
 
-t_vec3f compute_normal_cube(t_cube sp, t_vec3f *p_hit) {
-	return (t_vec3f){0};
+V3f_t compute_normal_cube(object_t *obj, V3f_t *p_hit) {
+	return (V3f_t){0};
 }
 
-t_vec3f compute_normal_torus(t_torus sp, t_vec3f *p_hit) {
-	return (t_vec3f){0};
+V3f_t compute_normal_torus(object_t *obj, V3f_t *p_hit) {
+	return (V3f_t){0};
 }
 
 
 
-t_vec3f compute_normal(t_object *obj, t_vec3f *p_hit) {
+V3f_t compute_normal(object_t *obj, V3f_t *p_hit) {
 	switch (obj->com.type) {
 		case SPHERE:
-			return compute_normal_sphere(obj->o_sphr, p_hit);
+			return compute_normal_sphere(obj, p_hit);
 		case CUBE:
-			return  compute_normal_cube(obj->o_cb, p_hit);
+			return  compute_normal_cube(obj, p_hit);
 		case TORUS:
-			return compute_normal_torus(obj->o_trs, p_hit);
+			return compute_normal_torus(obj, p_hit);
 		default:
-			return (t_vec3f){0};
+			return (V3f_t){0};
 	};
 }
 
