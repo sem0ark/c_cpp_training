@@ -2,9 +2,12 @@
 #include "camera.h"
 #include "object.h"
 #include "ray_tracer.h"
+#include "light_utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+
 
 void test_vectors(void) {
 	// testing vectors
@@ -106,13 +109,13 @@ void test_print(int w, int h, V3f_t* pixels) {
 	}*/
 }
 void test_raytracer(void) {
-	int w=320, h=240;
+	int w=600, h=600;
 	camera_t cam = {
-		v3f(0, 0, 9),
+		v3f(-0.25, 0, 12),
 		v3f(0,0,0),
 		30
 	};
-	int N = 4;
+	int N = 5;
 	object_t** objects = (object_t **) malloc(sizeof(object_t*)*N);
 	for (int i=0; i<N; i++) {
 		objects[i] = (object_t *) malloc(sizeof(object_t));
@@ -125,19 +128,20 @@ void test_raytracer(void) {
 			v3f(0,0,0),
 			v3f(0,0,0),
 			0,
-			0.9,
+			1,
 			1
 		}
 	};
+
 	*objects[1] = (object_t){
 		.o_sphr = {
 			SPHERE,
 			v3f(0.9,0.9,1),
 			v3f(0,0,0),
-			v3f(0.8,0,2),
+			v3f(0,-2,0),
 			1,
 			0.2,
-			1
+			0.5
 		}
 	};
 
@@ -146,25 +150,36 @@ void test_raytracer(void) {
 			SPHERE,
 			v3f(1,0.6,1),
 			v3f(0,0,0),
-			v3f(-1.5,0.5,1.5),
-			0,
+			v3f(-1.3,0.5,2),
+			1,
 			0.2,
-			1
+			0.5
 		}
 	};
 
 	*objects[3] = (object_t){
 		.o_sphr = {
 			SPHERE,
-			v3f(1,1,1),
-			v3f(1,1,1),
-			v3f(0,-110,0),
+			v3f(0,0,0),
+			v3f(0,0,1),
+			v3f(0,10,-10),
 			0,
 			0,
-			100
+			3
 		}
 	};
 
+	*objects[4] = (object_t){
+		.o_sphr = {
+			SPHERE,
+			v3f(0,0,0),
+			v3f(1,0,0),
+			v3f(0,-10,-10),
+			0,
+			0,
+			3
+		}
+	};
 	V3f_t *pixels = (V3f_t *)malloc(h * w * sizeof(V3f_t));
 	render(w, h, &cam, pixels, objects, N);
 	printf("Picture\n");
@@ -183,10 +198,22 @@ void test_raytracer(void) {
 	return;
 }
 
+void test_matrix(void) {
+M44d_t s = m44d(    0.707107,  0,        -0.707107, 0,
+									  -0.331295, 0.883452, -0.331295, 0,
+									  0.624695,  0.468521, 0.624695,  0,
+									  4.000574,  3.00043,  4.000574,  1);
+	show_m44d(&s);
+	M44d_t res = inv_mat44d(s);
+	show_m44d(&res);
+	return;
+}
+
 int main(void) {
 //	test_vectors();
 //	test_camera();
 //	test_object();
 	test_raytracer();
+//	test_matrix();
 	return 0;
 }

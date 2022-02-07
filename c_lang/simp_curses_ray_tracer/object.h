@@ -1,12 +1,10 @@
-#include <math.h>
-
-#include "utils.h"
-
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#define MIN(a, b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a > _b ? _a : _b; })
-#define MAX(a, b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a < _b ? _a : _b; })
+#include <math.h>
+
+#include "utils.h"
+#include "light_utils.h"
 
 enum OBJECT_TYPE{
 	SPHERE,
@@ -58,3 +56,4 @@ int intersect(object_t *obj, ray_t *ray, float *intsct_coef);
 V3f_t compute_normal(object_t *obj, V3f_t *p_hit);
 
 #endif
+

@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "utils.h"
+#include "light_utils.h"
 #include "object.h"
 
 

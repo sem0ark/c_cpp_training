@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "utils.h"
+#include "light_utils.h"
 
 typedef struct {
 	V3f_t positon;

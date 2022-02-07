@@ -3,10 +3,11 @@
 #include <math.h>
 
 #include "utils.h"
+#include "light_utils.h"
 #include "object.h"
 #include "camera.h"
 
-#define MAX_RAY_DEPTH 3
+#define MAX_RAY_DEPTH 6
 // TODO: delete after testing
 #include <stdio.h>
 
@@ -89,9 +90,6 @@ V3f_t trace(ray_t *ray, int depth, object_t** objects, int objects_num) {
 												objects[j]->com.transparency);*/
 					}
 				}
-				 // TODO: Maybe it is transmission = l_obj_em_col
-				 // 								* i_obj_col_1 * i_obj_col_2 * ... ?
-
 				surf_color = sum_v3(surf_color,
 						mul_v3_v(
 							mul_v3_f(
@@ -102,8 +100,7 @@ V3f_t trace(ray_t *ray, int depth, object_t** objects, int objects_num) {
 			}
 		}
 	}
-
-	return sum_v3(surf_color, b_object->com.emission_color);
+	return clamp_v3(sum_v3(surf_color, b_object->com.emission_color), 0.0f, 1.0f);
 }
 
 
