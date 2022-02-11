@@ -7,7 +7,7 @@
 #include "object.h"
 #include "camera.h"
 
-#define MAX_RAY_DEPTH 6
+#define MAX_RAY_DEPTH 3
 // TODO: delete after testing
 #include <stdio.h>
 
@@ -45,6 +45,7 @@ V3f_t trace(ray_t *ray, int depth, object_t** objects, int objects_num) {
 		float facing_ratio = -dot_v3(ray->direction, n_hit);
 
 		float frensel_effect = mix(pow(1 - facing_ratio, 3), 1, 0.3);
+
 		ray_t refl_ray = (ray_t) {
 				sum_v3(p_hit, mul_v3_f(n_hit, bias)),
 				reflect(ray->direction, n_hit)};
@@ -58,46 +59,42 @@ V3f_t trace(ray_t *ray, int depth, object_t** objects, int objects_num) {
 			float eta = (inside) ? ior : 1 / ior; // Are we inside of object?
 			ray_t refr_ray = (ray_t){
 					diff_v3(p_hit, mul_v3_f(n_hit, bias)),
-					refract(ray->direction, n_hit, eta)};
+					refract(ray, &n_hit, eta)};
 
 			refraction = trace(&refr_ray, depth + 1, objects, objects_num);
 		}
 
 		surf_color = mul_v3_v(
 				sum_v3(
-					mul_v3_f(reflection, frensel_effect),
-					mul_v3_f(refraction, (1-frensel_effect))),
+					mul_v3_f(reflection, frensel_effect * b_object->com.reflection),
+					mul_v3_f(refraction, (1-frensel_effect) * b_object->com.transparency)),
 				b_object->com.surface_color);
 
-	} else {
-		/* Object is completely diffuse no need to retrace further */
-		for (int i=0; i < objects_num; i++) {
-			if (len_sq_v3(objects[i]->com.emission_color) > 0) {
-				V3f_t transmission = {1, 1, 1};
-				ray_t emission_ray = (ray_t) {p_hit,
-					normalize_v3(
-							diff_v3(objects[i]->com.center, p_hit))};
+	}
+	for (int i=0; i < objects_num; i++) {
+		if (len_sq_v3(objects[i]->com.emission_color) > 0) {
+			V3f_t transmission = {1, 1, 1};
+			ray_t emission_ray = (ray_t) {p_hit,
+				normalize_v3(diff_v3(objects[i]->com.center, p_hit))};
 
 				if (dot_v3(n_hit, emission_ray.direction) <= 0) continue;
 
-				float t0 = INFINITY;
-				for (int j=0; j < objects_num; j++) {
-					if (i == j) continue;
-					if (intersect(objects[j], &emission_ray, &t0)) {
-						transmission = (V3f_t){0}; break;
-							/*mul_v3_f(mul_v3_v(transmission,
-												objects[j]->com.surface_color),
-												objects[j]->com.transparency);*/
-					}
+			float t0 = INFINITY;
+			for (int j=0; j < objects_num; j++) {
+				if (i == j) continue;
+				if (intersect(objects[j], &emission_ray, &t0)) {
+					transmission = (V3f_t){0};
+					break;
 				}
-				surf_color = sum_v3(surf_color,
-						mul_v3_v(
-							mul_v3_f(
-								mul_v3_v(b_object->com.surface_color, transmission),
-								dot_v3(n_hit, emission_ray.direction)),
-							objects[i]->com.emission_color)
-						);
 			}
+			surf_color = sum_v3(surf_color,
+					mul_v3_v(
+						mul_v3_f(
+							mul_v3_v(b_object->com.surface_color, transmission),
+							dot_v3(n_hit, emission_ray.direction)
+								* (1 - (b_object->com.transparency + b_object->com.reflection))),
+						objects[i]->com.emission_color)
+					);
 		}
 	}
 	return clamp_v3(sum_v3(surf_color, b_object->com.emission_color), 0.0f, 1.0f);

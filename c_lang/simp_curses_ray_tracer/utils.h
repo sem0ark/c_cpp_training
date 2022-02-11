@@ -3,18 +3,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-/* Mth Macro */
-#define MAX(a,b) \
-  ({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b; })
-#define MIN(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-      __typeof__ (b) _b = (b); \
-     _a < _b ? _a : _b; })
-
-#define CLAMP(a,lw,hi) \
-  ({ MAX(lw, MIN(hi, a)); })
 
 #ifndef INFINITY
 #define INFINITY 1e8
@@ -24,10 +12,40 @@
 #define M_PI 3.141592653589793
 #endif
 
+/* Math Macro */
+#define MAX(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b; })
+#define MIN(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+      __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
+#define CLAMP(a,lo,hi) \
+  ({ MAX(lo, MIN(hi, a)); })
+
+#define DEG2RAD(a) \
+	({ (float)(a) * M_PI / 180; })
+
+/* Inline functions */
+static inline float mix(float a, float b, float mix) {
+	return b*mix + a*(1-mix);
+}
+
+static inline void swapf(float *a, float *b) {
+	float _tmp = *a; *a = *b; *b = _tmp;
+}
+
 /* Vector 3d struct float type */
 typedef struct Vec3f {
 	float x, y, z;
 } V3f_t;
+
+/* Vector 2d struct float type */
+typedef struct Vec2f {
+	float x, y;
+} V2f_t;
 
 /* Vector 3d struct double type */
 typedef struct Vec3d {
@@ -43,6 +61,22 @@ typedef struct Matrix44f {
 typedef struct Matrix44d {
 	double mat[4][4];
 } M44d_t;
+
+/* Structure for configuration */
+typedef struct Options {
+	int width;
+	int height;
+	float fov;
+	int max_depth;
+	V3f_t background_color;
+	float bias;
+} options_t;
+
+
+/* Math functions */
+
+int solve_quadratic(float a, float b, float c, float *x0, float *x1);
+
 
 /* Vector operations */
 
@@ -77,8 +111,6 @@ V3d_t cross_v3d(V3d_t a, V3d_t b);
 /* Clamps values of vector */
 V3f_t clamp_v3(V3f_t a, float dw, float hi);
 V3d_t clamp_v3d(V3d_t a, double dw, double hi);
-/* Mixes to values */
-float mix(float a, float b, float mix);
 
 /* Dot product of two vectors (a . b) */
 float dot_v3(V3f_t a, V3f_t b);
@@ -95,6 +127,12 @@ char *repr_v3d(V3d_t a);
 /* Print v3*/
 void sv(V3f_t *);
 void sv_d(V3d_t *);
+
+/* for vec2 */
+/* vector sum */
+V2f_t sum_v2f(V2f_t a, V2f_t b);
+V2f_t mul_v2f_f(V2f_t a, float f);
+V2f_t mul_v2f_v(V2f_t a, V2f_t b);
 
 /* Matrix operations */
 /* Create Matrix 4x4 */

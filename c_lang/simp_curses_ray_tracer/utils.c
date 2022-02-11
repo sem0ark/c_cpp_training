@@ -5,21 +5,30 @@
 #include "utils.h"
 
 
-
 /* Math functions */
-float mix(float a, float b, float mix) {
-	return b*mix + a*(1-mix);
+int solve_quadratic(float a, float b, float c, float *x0, float *x1) {
+  float d = b*b - 4*a*c;
+  if (d < 0) return 0;
+  else if (d == 0) *x0 = *x1 = -0.5*b / a;
+  else {
+    float q = (b>0) ?  -0.5*(b+sqrt(d)) : -0.5*(b-sqrt(d));
+    *x0 = q/a;
+    *x1 = c/q;
+  }
+  if (*x0>*x1) { swapf(x0, x1); }
+  return 1;
 }
+
 
 /* V3 class */
 V3f_t v3f(float x, float y, float z) { return (V3f_t) {x, y, z}; }
-V3f_t sum_v3(V3f_t a, V3f_t b) { return (V3f_t){a.x+b.x, a.y+b.y, a.z+b.z}; }
-V3f_t diff_v3(V3f_t a, V3f_t b) { return (V3f_t){a.x-b.x, a.y-b.y, a.z-b.z}; }
-V3f_t mul_v3_f(V3f_t a, float f) { return (V3f_t){a.x*f, a.y*f, a.z*f}; }
-V3f_t mul_v3_v(V3f_t a, V3f_t b) { return (V3f_t){a.x*b.x, a.y*b.y, a.z*b.z}; }
-V3f_t inv_v3(V3f_t a) { return (V3f_t){1.0f/a.x, 1.0f/a.y, 1.0f/a.z}; }
-V3f_t neg_v3(V3f_t a) { return (V3f_t){-a.x, -a.y, -a.z}; }
-V3f_t normalize_v3(V3f_t a) { return mul_v3_f(a, 1/len_v3(a)); }
+V3f_t sum_v3(V3f_t a, V3f_t b)       { return (V3f_t) {a.x+b.x, a.y+b.y, a.z+b.z}; }
+V3f_t diff_v3(V3f_t a, V3f_t b)      { return (V3f_t) {a.x-b.x, a.y-b.y, a.z-b.z}; }
+V3f_t mul_v3_f(V3f_t a, float f)     { return (V3f_t) {a.x*f, a.y*f, a.z*f}; }
+V3f_t mul_v3_v(V3f_t a, V3f_t b)     { return (V3f_t) {a.x*b.x, a.y*b.y, a.z*b.z}; }
+V3f_t inv_v3(V3f_t a)                { return (V3f_t) {1.0f/a.x, 1.0f/a.y, 1.0f/a.z}; }
+V3f_t neg_v3(V3f_t a)                { return (V3f_t) {-a.x, -a.y, -a.z}; }
+V3f_t normalize_v3(V3f_t a)          { return mul_v3_f(a, 1/len_v3(a)); }
 V3f_t cross_v3(V3f_t a, V3f_t b) {
     return (V3f_t){a.y*b.z-a.z*b.y, a.y*b.x-a.x*b.z, a.x*b.y-a.y*b.z};
 }
@@ -27,24 +36,24 @@ V3f_t clamp_v3(V3f_t a, float dw, float hi) {
   return (V3f_t) {CLAMP(a.x, dw, hi), CLAMP(a.y, dw, hi), CLAMP(a.z, dw, hi)};
 }
 float dot_v3(V3f_t a, V3f_t b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
-float len_sq_v3(V3f_t a) { return a.x*a.x + a.y*a.y + a.z*a.z; }
-float len_v3(V3f_t a) { return sqrt(len_sq_v3(a)); }
+float len_sq_v3(V3f_t a)       { return a.x*a.x + a.y*a.y + a.z*a.z; }
+float len_v3(V3f_t a)          { return sqrt(len_sq_v3(a)); }
 
 V3d_t v3d(double x, double y, double z) { return (V3d_t) {x, y, z}; }
-V3d_t sum_v3d(V3d_t a, V3d_t b) { return (V3d_t){a.x+b.x, a.y+b.y, a.z+b.z}; }
-V3d_t diff_v3d(V3d_t a, V3d_t b) { return (V3d_t){a.x-b.x, a.y-b.y, a.z-b.z}; }
-V3d_t mul_v3d_d(V3d_t a, double f) { return (V3d_t){a.x*f, a.y*f, a.z*f}; }
-V3d_t mul_v3d_v(V3d_t a, V3d_t b) { return (V3d_t){a.x*b.x, a.y*b.y, a.z*b.z}; }
-V3d_t inv_v3d(V3d_t a) { return (V3d_t){1.0/a.x, 1.0/a.y, 1.0/a.z}; }
-V3d_t neg_v3d(V3d_t a) { return (V3d_t){-a.x, -a.y, -a.z}; }
-V3d_t normalize_v3d(V3d_t a) { return mul_v3d_d(a, 1/len_v3d(a)); }
-V3d_t cross_v3d(V3d_t a, V3d_t b) { return (V3d_t){a.y*b.z-a.z*b.y, a.y*b.x-a.x*b.z, a.x*b.y-a.y*b.z}; }
+V3d_t sum_v3d(V3d_t a, V3d_t b)         { return (V3d_t) {a.x+b.x, a.y+b.y, a.z+b.z}; }
+V3d_t diff_v3d(V3d_t a, V3d_t b)        { return (V3d_t) {a.x-b.x, a.y-b.y, a.z-b.z}; }
+V3d_t mul_v3d_d(V3d_t a, double f)      { return (V3d_t) {a.x*f, a.y*f, a.z*f}; }
+V3d_t mul_v3d_v(V3d_t a, V3d_t b)       { return (V3d_t) {a.x*b.x, a.y*b.y, a.z*b.z}; }
+V3d_t inv_v3d(V3d_t a)                  { return (V3d_t) {1.0/a.x, 1.0/a.y, 1.0/a.z}; }
+V3d_t neg_v3d(V3d_t a)                  { return (V3d_t) {-a.x, -a.y, -a.z}; }
+V3d_t normalize_v3d(V3d_t a)            { return mul_v3d_d(a, 1/len_v3d(a)); }
+V3d_t cross_v3d(V3d_t a, V3d_t b)       { return (V3d_t) {a.y*b.z-a.z*b.y, a.y*b.x-a.x*b.z, a.x*b.y-a.y*b.z}; }
 V3d_t clamp_v3d(V3d_t a, double dw, double hi) {
   return (V3d_t) {CLAMP(a.x, dw, hi), CLAMP(a.y, dw, hi), CLAMP(a.z, dw, hi)};
 }
 double dot_v3d(V3d_t a, V3d_t b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
-double len_sq_v3d(V3d_t a) { return a.x*a.x + a.y*a.y + a.z*a.z; }
-double len_v3d(V3d_t a) { return sqrt(len_sq_v3d(a)); }
+double len_sq_v3d(V3d_t a)       { return a.x*a.x + a.y*a.y + a.z*a.z; }
+double len_v3d(V3d_t a)          { return sqrt(len_sq_v3d(a)); }
 
 char repr_res[50];
 char *repr_v3(V3f_t a) {
@@ -62,7 +71,10 @@ void sv_d(V3d_t *a) {
 	printf("%s\n", repr_v3d(*a));
 }
 
-
+/* Vec2 class */
+V2f_t sum_v2f(V2f_t a, V2f_t b)   { return (V2f_t) {a.x+b.x, a.y+b.y}; }
+V2f_t mul_v2f_f(V2f_t a, float f) { return (V2f_t) {a.x*f, a.y*f}; }
+V2f_t mul_v2f_v(V2f_t a, V2f_t b) { return (V2f_t) {a.x*b.x, a.y*b.y}; }
 
 /* Matrix operations */
 M44f_t m44f_unit(void) {

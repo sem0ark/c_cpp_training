@@ -8,9 +8,20 @@ typedef struct {
 	V3f_t origin;
 	V3f_t direction;
 } ray_t;
+
+/* compound struct for light source */
+typedef struct {
+	V3f_t position;
+	V3f_t intensity;
+} light_t;
+
 /* Compute reflection of ray */
-V3f_t reflect(V3f_t ray_dir, V3f_t norm);
+V3f_t reflect(V3f_t *dir, V3f_t *norm);
+
 /* Comupte refraction of ray */
-V3f_t refract(V3f_t ray_dir, V3f_t norm, float eta);
+V3f_t refract(V3f_t *dir, V3f_t *norm, float ior);
+
+/* Compute fresnel coef */
+void fresnel(ray_t *ray, V3f_t *norm, float ior, float *kr);
 
 #endif
