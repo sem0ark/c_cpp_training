@@ -58,7 +58,7 @@ void test_whitted(void) {
 
 	camera_t cam = {
 		.position = v3f(0, 1, 1),
-		.rotation = v3f(0,0,0),
+		.rotation = v3f(0,0.1,0),
 		.fov = 45,
 	};
 	cam.c2w = get_cam2w_mat44f(&cam);
@@ -83,7 +83,7 @@ void test_whitted(void) {
 	m2.ior = 1.52f;
 	m2.specular_exp = 55.0f;
 	m2.d_col   = mul_v3_f(obj_col_2, 0.1f);
-	m2.e_col   = mul_v3_f(obj_col_2, 0.3f);
+	m2.e_col   = mul_v3_f(obj_col_2, 0.1f);
 	m2.rfl_col = mul_v3_f(obj_col_2, 1.0f);
 	m2.rfr_col = mul_v3_f(obj_col_2, 1.0f);
 	m2.s_col   = mul_v3_f(obj_col_2, 0.05f);
@@ -110,7 +110,7 @@ void test_whitted(void) {
 		.intensity = v3f(1,1,1)
 	};
 
-	int No = 5;
+	int No = 2;
 	object_t **objects = (object_t **)malloc(sizeof(object_t *)*No);
 	for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
 
@@ -122,15 +122,16 @@ void test_whitted(void) {
 			.norm = normalize_v3(v3f(0,0,1)),
 		}
 	};
-/*
+
 	*objects[1] = (object_t) {
 		.o_sphr = (sphere_t) {
 			.type = SPHERE,
 			.material = &m2,
-			.center = v3f(-5,0,1),
-			.radius = 1.0f,
+			.center = v3f(-7,0,2),
+			.radius = 2.0f,
 		}
-	};*/
+	};
+
 /*
 	*objects[2] = (object_t) {
 		.o_sphr = (sphere_t) {
@@ -141,7 +142,7 @@ void test_whitted(void) {
 		}
 	};
 */
-
+/*
 	for (int i=1; i < No; i++) {
 		*objects[i] = (object_t) {
 			.o_sphr = (sphere_t) {
@@ -152,11 +153,16 @@ void test_whitted(void) {
 			}
 	};
 	}
-
-	V3f_t *pixels = (V3f_t *)malloc(options.width
-								* options.height * sizeof(V3f_t));
-
-	render(&options, &cam, pixels, objects, No, lights, Nl);
+*/
+	V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
+	for (int i=0; i<200; i++) {
+		render(&options, &cam, pixels, objects, No, lights, Nl);
+		print_screen(&options, pixels);
+		cam.rotation.y -= 0.05;
+		cam.c2w = get_cam2w_mat44f(&cam);
+		mvprintw(0,0,"%f", cam.rotation.x);
+		refresh();
+	}
 
 	for (int i=0; i<Nl; i++) free(lights[i]);
 	free(lights);
@@ -164,9 +170,7 @@ void test_whitted(void) {
 	for (int i=0; i<No; i++) free(objects[i]);
 	free(objects);
 
-	print_screen(&options, pixels);
-	pixels2file(&options, pixels);
-
+	//pixels2file(&options, pixels);
 	getch();
 	shut_down();
 	return;
@@ -180,6 +184,7 @@ M44d_t s = m44d(    0.707107,  0,        -0.707107, 0,
 	show_m44d(&s);
 	M44d_t res = inv_mat44d(s);
 	show_m44d(&res);
+
 	return;
 }
 

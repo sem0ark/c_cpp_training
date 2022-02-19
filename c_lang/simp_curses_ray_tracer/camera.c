@@ -17,14 +17,14 @@ void get_ray(camera_t *cam, float inv_w, float inv_h, float asp_ratio, float cha
 }
 
 M44f_t get_cam2w_mat44f(camera_t *cam) {
-  float sa = sinf(cam->rotation.x);
-  float ca = cosf(cam->rotation.x);
-  float sb = sinf(cam->rotation.y);
-  float cb = cosf(cam->rotation.y);
+  double sa = sin(cam->rotation.x);
+  double ca = cos(cam->rotation.x);
+  double sb = sin(cam->rotation.y);
+  double cb = cos(cam->rotation.y);
 
-  V3f_t forward = v3f(ca*cb, cb*sa, sb);
-  V3f_t right = v3f(-sa, ca, 0.0f);
-  V3f_t up = cross_v3(forward, right);
+  V3d_t forward = v3d(ca*cb, cb*sa, -sb);
+  V3d_t right = v3d(-sb, ca, 0.0);
+  V3d_t up = v3d(ca*sb, sa*sb, cb);
 
   M44f_t cam_to_world = (M44f_t){0};
   cam_to_world.mat[0][0] = right.x;
