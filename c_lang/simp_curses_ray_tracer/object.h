@@ -33,7 +33,7 @@ typedef struct {
 	Material_t *material;
 	V3f_t center;
 
-	V3f_t direction; // normal vector to plane
+	V3f_t norm; // normal vector to plane
 } plane_t;
 
 typedef struct {
@@ -52,7 +52,7 @@ typedef struct {
 typedef union {
 	object_common_t com;
 	sphere_t o_sphr;
-	plane_t o_plane;
+	plane_t o_pln;
 	cube_t o_cb;
 	torus_t o_trs;
 } object_t;

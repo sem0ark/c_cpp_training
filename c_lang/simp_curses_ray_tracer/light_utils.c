@@ -21,9 +21,10 @@ V3f_t refract(V3f_t *dir, V3f_t *norm, float ior) {
 		sum_v3(mul_v3_f(*dir, eta),
 				mul_v3_f(n, (eta*cosi - sqrtf(k))));
 }
+
 /* kr - reflection coef */
-void fresnel(ray_t *ray, V3f_t *norm, float ior, float *kr) {
-	float cosi = CLAMP(dot_v3(ray->direction, *norm), -1, 1);
+void fresnel(V3f_t *dir, V3f_t *norm, float ior, float *kr) {
+	float cosi = CLAMP(dot_v3(*dir, *norm), -1, 1);
 	float etai = 1, etat = ior;
 	if (cosi > 0) { swapf(&etai, &etat); }
 	// Compute sini using Shell's law

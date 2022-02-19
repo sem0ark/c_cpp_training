@@ -21,7 +21,9 @@ int solve_quadratic(float a, float b, float c, float *x0, float *x1) {
 
 
 /* V3 class */
+V3f_t v3f_s(float x)                 { return (V3f_t) {x, x, x}; }
 V3f_t v3f(float x, float y, float z) { return (V3f_t) {x, y, z}; }
+
 V3f_t sum_v3(V3f_t a, V3f_t b)       { return (V3f_t) {a.x+b.x, a.y+b.y, a.z+b.z}; }
 V3f_t diff_v3(V3f_t a, V3f_t b)      { return (V3f_t) {a.x-b.x, a.y-b.y, a.z-b.z}; }
 V3f_t mul_v3_f(V3f_t a, float f)     { return (V3f_t) {a.x*f, a.y*f, a.z*f}; }
@@ -39,6 +41,7 @@ float dot_v3(V3f_t a, V3f_t b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
 float len_sq_v3(V3f_t a)       { return a.x*a.x + a.y*a.y + a.z*a.z; }
 float len_v3(V3f_t a)          { return sqrt(len_sq_v3(a)); }
 
+V3d_t v3d_s(double x)                 { return (V3d_t) {x, x, x}; }
 V3d_t v3d(double x, double y, double z) { return (V3d_t) {x, y, z}; }
 V3d_t sum_v3d(V3d_t a, V3d_t b)         { return (V3d_t) {a.x+b.x, a.y+b.y, a.z+b.z}; }
 V3d_t diff_v3d(V3d_t a, V3d_t b)        { return (V3d_t) {a.x-b.x, a.y-b.y, a.z-b.z}; }
@@ -312,9 +315,9 @@ void mult_vec_v3_mat44_f(V3f_t* src, M44f_t *m, V3f_t *dst) {
 void mult_dir_v3_mat44_f(V3f_t* src, M44f_t *m, V3f_t *dst) {
   float a, b, c;
 
-  a = src->x * m->mat[0][0] + src->y * m->mat[1][0] + src->z * m->mat[2][0] + m->mat[3][0];
-  b = src->x * m->mat[0][1] + src->y * m->mat[1][1] + src->z * m->mat[2][1] + m->mat[3][1];
-  c = src->x * m->mat[0][2] + src->y * m->mat[1][2] + src->z * m->mat[2][2] + m->mat[3][2];
+  a = src->x * m->mat[0][0] + src->y * m->mat[1][0] + src->z * m->mat[2][0];
+  b = src->x * m->mat[0][1] + src->y * m->mat[1][1] + src->z * m->mat[2][1];
+  c = src->x * m->mat[0][2] + src->y * m->mat[1][2] + src->z * m->mat[2][2];
 
   dst->x = a;
   dst->y = b;
@@ -339,9 +342,9 @@ void mult_vec_v3_mat44_d(V3d_t* src, M44d_t *m, V3d_t *dst) {
 void mult_dir_v3_mat44_d(V3d_t* src, M44d_t *m, V3d_t *dst) {
   double a, b, c;
 
-  a = src->x * m->mat[0][0] + src->y * m->mat[1][0] + src->z * m->mat[2][0] + m->mat[3][0];
-  b = src->x * m->mat[0][1] + src->y * m->mat[1][1] + src->z * m->mat[2][1] + m->mat[3][1];
-  c = src->x * m->mat[0][2] + src->y * m->mat[1][2] + src->z * m->mat[2][2] + m->mat[3][2];
+  a = src->x * m->mat[0][0] + src->y * m->mat[1][0] + src->z * m->mat[2][0];
+  b = src->x * m->mat[0][1] + src->y * m->mat[1][1] + src->z * m->mat[2][1];
+  c = src->x * m->mat[0][2] + src->y * m->mat[1][2] + src->z * m->mat[2][2];
 
   dst->x = a;
   dst->y = b;

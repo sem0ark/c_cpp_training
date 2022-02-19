@@ -1,8 +1,8 @@
 CC = gcc
 
-CFLG = -g -Wall -Wextra
+CFLG = -g -Wall -Wextra -O3
 IFLG = -I.
-LFLG = -lm
+LFLG = -lm -lncurses
 
 TARGET = ray_tracer.exe
 

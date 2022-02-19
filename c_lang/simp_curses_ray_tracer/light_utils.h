@@ -22,6 +22,6 @@ V3f_t reflect(V3f_t *dir, V3f_t *norm);
 V3f_t refract(V3f_t *dir, V3f_t *norm, float ior);
 
 /* Compute fresnel coef */
-void fresnel(ray_t *ray, V3f_t *norm, float ior, float *kr);
+void fresnel(V3f_t *dir, V3f_t *norm, float ior, float *kr);
 
 #endif

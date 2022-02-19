@@ -22,10 +22,12 @@ typedef struct Material {
 	V3f_t d_col; 									// diffusion color
 	V3f_t s_col; 									// specular color
 	V3f_t e_col; 									// emission color
+	V3f_t rfr_col; 								// refraction color
+	V3f_t rfl_col; 								// reflection color
 	float specular_exp;
 	char *texture_filename;
 } Material_t;
 
-V3f_t eval_diffuse_color(Material_t *material, V2f_t *st);
+V3f_t eval_texture_color(Material_t *material, V2f_t *st);
 
 #endif

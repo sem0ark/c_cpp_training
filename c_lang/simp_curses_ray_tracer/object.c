@@ -36,11 +36,11 @@ int intersect_sphere(object_t *obj, ray_t *ray, float *intsct_coef) {
 }
 
 int intersect_plane(object_t *obj, ray_t *ray, float *intsct_coef) {
-	float den = fabsf(dot_v3(obj->o_plane.direction, ray->direction));
-	if (den > 1e-6){
+	float den = dot_v3(obj->o_pln.norm, ray->direction);
+	if (fabsf(den) > 1e-6){
 		*intsct_coef = dot_v3(
-				diff_v3(obj->o_plane.center, ray->origin),
-				obj->o_plane.direction) / den;
+				diff_v3(obj->o_pln.center, ray->origin),
+				obj->o_pln.norm) / den;
 		return (*intsct_coef>=0);
 	}
 	return 0;
@@ -99,14 +99,14 @@ V3f_t compute_normal(object_t *obj, V3f_t *p_hit) {
 
 
 void get_surf_properties_shpr(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
-	*N = diff_v3(*p_hit, obj->o_sphr.center);
+	*N = normalize_v3(diff_v3(*p_hit, obj->o_sphr.center));
 	return;
 }
 
 void get_surf_properties_pln(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
-	*N = obj->o_plane.direction;
-	st->x = fmodf(p_hit->x - obj->com.center.x, 1);
-	st->y = fmodf(p_hit->y - obj->com.center.y, 1);
+	*N = obj->o_pln.norm;
+	st->x = fmodf(fabsf(p_hit->x - obj->com.center.x), 2)/2.0f;
+	st->y = fmodf(fabsf(p_hit->y - obj->com.center.y), 2)/2.0f;
 	return;
 }
 
@@ -124,7 +124,7 @@ void get_surf_properties(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2
 			get_surf_properties_shpr(obj, p_hit, dir, index, uv, N, st);
 			break;
 		case PLANE:
-			get_surf_properties_shpr(obj, p_hit, dir, index, uv, N, st);
+			get_surf_properties_pln(obj, p_hit, dir, index, uv, N, st);
 			break;
 		case CUBE:
 			get_surf_properties_cb(obj, p_hit, dir, index, uv, N, st);

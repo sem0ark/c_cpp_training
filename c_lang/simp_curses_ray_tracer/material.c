@@ -1,10 +1,9 @@
 #include "utils.h"
 #include "material.h"
 
-
 V3f_t get_checker(V2f_t *st) {
-	if ((st->x > 0.5f) ^ (st->y > 0.5f)) return v3f(1,1,1);
-	else return v3f(0.8,0.8,0.8);
+	if ((st->x > 0.5f) ^ (st->y > 0.5f)) return v3f_s(1.0f);
+	else return v3f_s(0.2f);
 }
 
 

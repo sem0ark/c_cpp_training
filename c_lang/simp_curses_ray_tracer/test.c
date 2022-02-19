@@ -6,9 +6,10 @@
 #include "light_utils.h"
 #include "screen.h"
 
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <ncurses.h>
 
 
 void test_vectors(void) {
@@ -28,225 +29,97 @@ void test_vectors(void) {
 	printf("%f\n", len_sq_v3(a));
 	printf("%f\n", len_v3(a));
 }
-/*
-void test_camera(void) {
-	int w=5, h=3;
-	camera_t cam = {
-		v3f(1, 4, 3),
-		v3f(0,0,0),
-		30
-	};
 
-	ray_t cur_ray;
-
-	sv(&cam.positon);
-	sv(&cam.rotation);
-	printf("%f\n", cam.fov);
-
-	for (int j=0; j<h; j++){
-		for (int i=0; i<w; i++) {
-			get_ray(&cam, 1/(float)w, 1/(float)h, i, j, &cur_ray);
-			printf("%d %d | %s \n", i, j, repr_v3(cur_ray.direction));
-		}
-	}
-	return;
+float frand(void) {
+	return (float) (rand() * 1.0 / RAND_MAX);
 }
 
-void test_object(void) {
-	ray_t ray = {
-		v3f(10,0.9999,0),
-		normalize_v3(v3f(-1,0,0))
-	};
-	object_t sphere = {
-		.o_sphr = {
-			.type = SPHERE,
-			.surface_color = v3f(1.0f,0.0f,1.0f),
-			.emission_color = v3f(0.1f,0.1f,0.1f),
-			.center = v3f(0.0f,0.1f,0.0f),
-			.transparency = 0.1f,
-			.reflection = 0.1f,
-			.radius = 1.0f
-		}
-	};
-	float coef = 0;
-	int res = intersect(&sphere, &ray, &coef);
-	printf("%d %f\n", res, coef);
-	V3f_t p_hit = sum_v3(ray.origin, mul_v3_f(ray.direction, coef));
-	sv(&p_hit);
-	V3f_t norm = compute_normal(&sphere, &p_hit);
-	sv(&norm);
-	V3f_t refl = reflect(ray.direction, norm);
-	sv(&refl);
-	return;
-} */
-
-void test_print(int w, int h, V3f_t* pixels) {
-//	pixels2file(pixels, w, h);
-	/*for (int j=0; j<h; j++) {
-		for (int i=0; i<w; i++) {
-			float t = len_v3(pixels[w*j+i]);
-			if (t >= 0.4) {
-				printf("0");
-			} else if (t > 0){
-				printf(".");
-			} else {
-				printf(" ");
-			}
-		}
-		printf("\n");
-		fflush(stdout);
-	}*/
-}
-
-void test_raytracer(void) {/*
-	int w=600, h=600;
-	camera_t cam = {
-		v3f(-0.25, 0, 12),
-		v3f(0,0,0),
-		30
-	};
-	int N = 5;
-	object_t** objects = (object_t **) malloc(sizeof(object_t*)*N);
-	for (int i=0; i<N; i++) {
-		objects[i] = (object_t *) malloc(sizeof(object_t));
-	}
-
-	*objects[0] = (object_t){
-		.o_sphr = {
-			SPHERE,
-			v3f(0.3,0.9,0.7),
-			v3f(0,0,0),
-			v3f(0,0,0),
-			0,
-			0.5,
-			1
-		}
-	};
-
-	*objects[1] = (object_t){
-		.o_sphr = {
-			SPHERE,
-			v3f(0.9,0.9,1),
-			v3f(0,0,0),
-			v3f(1,-2,2),
-			0.6,
-			0.4,
-			1
-		}
-	};
-
-	*objects[2] = (object_t){
-		.o_sphr = {
-			SPHERE,
-			v3f(1,0.6,1),
-			v3f(0,0,0),
-			v3f(-1.3,0.5,2),
-			0.1,
-			0.8,
-			0.5
-		}
-	};
-
-	*objects[3] = (object_t){
-		.o_sphr = {
-			SPHERE,
-			v3f(0,0,0),
-			v3f(0.5,0.5,0.5),
-			v3f(9,10,4),
-			0,
-			0,
-			3
-		}
-	};
-
-	*objects[4] = (object_t){
-		.o_sphr = {
-			SPHERE,
-			v3f(0,0,0),
-			v3f(1,1,1),
-			v3f(-9,10,4),
-			0,
-			0,
-			3
-		}
-	};
-	V3f_t *pixels = (V3f_t *)malloc(h * w * sizeof(V3f_t));
-	render(w, h, &cam, pixels, objects, N);
-	printf("Picture\n");
-	for (int i=0; i<w*h; i++) {
-		sv(&pixels[i]);
-	}
-
-	test_print(w, h, pixels);
-
-	for (int i=0; i<N; i++) {
-		free(objects[i]);
-	}
-	free(objects);
-	free(pixels);
-	*/
-	return;
+float frand_range(float min, float max) {
+	return min + frand() * (max-min);
 }
 
 void test_whitted(void) {
-	fflush(stdout);
+
+	srand(time(NULL));
+
 	options_t options = (options_t) {
-		.width = 200,
-		.height = 200,
+		.width = 1280,
+		.height = 960,
+		.console_ch_ratio = 0.5f,
+		.aa_coef = 3,
 		.fov = 40.0f,
-		.max_depth = 9,
-		.background_color = v3f(0.3f, 0.7f, 0.9f),
+		.max_depth = 3,
+		.background_color = v3f_s(0.0f),
+		.ambient_occlusion = v3f_s(0.0f),
 		.bias = 1e-4,
 	};
 
-	camera_t cam = {
-		v3f(0, 0, 20),
-		v3f(0,0,0),
-		30
-	};
+	init_screen(&options);
 
+	camera_t cam = {
+		.position = v3f(0, 1, 1),
+		.rotation = v3f(0,0,0),
+		.fov = 45,
+	};
+	cam.c2w = get_cam2w_mat44f(&cam);
+
+
+	V3f_t obj_col = v3f_s(1.0);//v3f(0.3f, 0.7f, 0.7f);
 	Material_t m1 = (Material_t){0};
 	m1.type = DIFF_GLOSSY;
-	m1.pattern_type = PLAIN;
+	m1.pattern_type = CHECKER;
 	m1.ior = 1.52f;
-	m1.specular_exp = 15.0f;
-	m1.d_col = m1.s_col = v3f(0.7,0.3,0.6);
+	m1.specular_exp = 55.0f;
+	m1.d_col   = mul_v3_f(obj_col, 1.0f);
+	m1.e_col   = mul_v3_f(obj_col, 0.0f);
+	m1.rfl_col = mul_v3_f(obj_col, 0.0f);
+	m1.rfr_col = mul_v3_f(obj_col, 0.0f);
+	m1.s_col   = mul_v3_f(obj_col, 0.0f);
 
+	V3f_t obj_col_2 = v3f_s(0.9);//v3f(0.6f, 0.6f, 0.8f);
 	Material_t m2 = (Material_t){0};
-	m2.type = DIFF_GLOSSY;
+	m2.type = DIFF_GLOSSY | REFLECT;
 	m2.pattern_type = PLAIN;
-	m2.ior = 1.9f;
-	m2.specular_exp = 5.0f;
-	m1.d_col = m1.s_col = v3f(0.3,0.7,0.6);
+	m2.ior = 1.52f;
+	m2.specular_exp = 55.0f;
+	m2.d_col   = mul_v3_f(obj_col_2, 0.1f);
+	m2.e_col   = mul_v3_f(obj_col_2, 0.3f);
+	m2.rfl_col = mul_v3_f(obj_col_2, 1.0f);
+	m2.rfr_col = mul_v3_f(obj_col_2, 1.0f);
+	m2.s_col   = mul_v3_f(obj_col_2, 0.05f);
+
+	V3f_t obj_col_3 = v3f(0.8f, 0.6f, 0.6f);
+	Material_t m3 = (Material_t){0};
+	m3.type = DIFF_GLOSSY | REFLECT | REFRACT;
+	m3.pattern_type = PLAIN;
+	m3.ior = 1.52f;
+	m3.specular_exp = 55.0f;
+	m3.d_col   = mul_v3_f(obj_col_3, 0.1f);
+	m3.e_col   = mul_v3_f(obj_col_3, 0.0f);
+	m3.rfl_col = mul_v3_f(obj_col_3, 1.0f);
+	m3.rfr_col = mul_v3_f(obj_col_3, 1.0f);
+	m3.s_col   = mul_v3_f(obj_col_3, 0.1f);
+
 
 	int Nl = 1;
 	light_t **lights = (light_t **)malloc(sizeof(light_t *)*Nl);
 	for (int i=0; i<Nl; i++) lights[i] = (light_t *)malloc(sizeof(light_t) * 1);
 
 	*lights[0] = (light_t){
-		v3f(0, 0, -20),
-		v3f(1,1,1)
+		.position = v3f(1000, 1000, 1000),
+		.intensity = v3f(1,1,1)
 	};
 
-	int No = 1;
+	int No = 5;
 	object_t **objects = (object_t **)malloc(sizeof(object_t *)*No);
 	for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
-/*
-	*objects[1] = (object_t) {
-		.o_sphr = (sphere_t) {
-			.type = SPHERE,
-			.material = &m1,
-			.center = v3f(0,0,0),
-			.radius = 1.0f,
-		}
-	};*/
 
 	*objects[0] = (object_t) {
-		.o_plane = (plane_t) {
+		.o_pln = (plane_t) {
 			.type = PLANE,
-			.material = &m2,
-			.center = v3f(0,0,-10),
-			.direction = v3f(0,0,-1),
+			.material = &m1,
+			.center = v3f(100,100,0),
+			.norm = normalize_v3(v3f(0,0,1)),
 		}
 	};
 /*
@@ -254,14 +127,36 @@ void test_whitted(void) {
 		.o_sphr = (sphere_t) {
 			.type = SPHERE,
 			.material = &m2,
-			.center = v3f(-2,1,0),
+			.center = v3f(-5,0,1),
 			.radius = 1.0f,
 		}
 	};*/
+/*
+	*objects[2] = (object_t) {
+		.o_sphr = (sphere_t) {
+			.type = SPHERE,
+			.material = &m3,
+			.center = v3f(-6,0.3,2),
+			.radius = 0.4f,
+		}
+	};
+*/
+
+	for (int i=1; i < No; i++) {
+		*objects[i] = (object_t) {
+			.o_sphr = (sphere_t) {
+				.type = SPHERE,
+				.material = &m2,
+				.center = v3f(frand_range(-6, -3), frand_range(-1.0, 1.0), frand_range(0.5, 2)),
+				.radius = frand_range(0.1, 0.6),
+			}
+	};
+	}
+
 	V3f_t *pixels = (V3f_t *)malloc(options.width
 								* options.height * sizeof(V3f_t));
+
 	render(&options, &cam, pixels, objects, No, lights, Nl);
-	pixels2file(&options, pixels);
 
 	for (int i=0; i<Nl; i++) free(lights[i]);
 	free(lights);
@@ -269,6 +164,11 @@ void test_whitted(void) {
 	for (int i=0; i<No; i++) free(objects[i]);
 	free(objects);
 
+	print_screen(&options, pixels);
+	pixels2file(&options, pixels);
+
+	getch();
+	shut_down();
 	return;
 }
 
@@ -284,11 +184,6 @@ M44d_t s = m44d(    0.707107,  0,        -0.707107, 0,
 }
 
 int main(void) {
-//	test_vectors();
-//	test_camera();
-//	test_object();
-//  test_raytracer();
-//	test_matrix();
 	test_whitted();
 	return 0;
 }

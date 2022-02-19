@@ -66,9 +66,12 @@ typedef struct Matrix44d {
 typedef struct Options {
 	int width;
 	int height;
+	float console_ch_ratio;
+	int aa_coef;
 	float fov;
 	int max_depth;
 	V3f_t background_color;
+	V3f_t ambient_occlusion;
 	float bias;
 } options_t;
 
@@ -81,6 +84,8 @@ int solve_quadratic(float a, float b, float c, float *x0, float *x1);
 /* Vector operations */
 
 /* create vector*/
+V3f_t v3f_s(float x);
+V3d_t v3d_s(double x);
 V3f_t v3f(float x, float y, float z);
 V3d_t v3d(double x, double y, double z);
 /* Sum of two vectors (a+b) */

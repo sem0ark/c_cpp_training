@@ -5,14 +5,43 @@
 #include "ray_tracer.h"
 #include "light_utils.h"
 
-void get_ray(camera_t *cam, float inv_w, float inv_h, float asp_ratio, int x, int y, ray_t *ray) {
+void get_ray(camera_t *cam, float inv_w, float inv_h, float asp_ratio, float char_ratio, int x, int y, ray_t *ray) {
 	float angle = tan(M_PI * 0.5 * cam->fov / 180.0);
-	float xx = (2*((x+0.5)*inv_w)-1)*angle*asp_ratio;
+	float xx = (2*((x+0.5)*inv_w)-1)*angle*asp_ratio * char_ratio;
 	float yy = (1 - 2*((y+0.5)*inv_h)) * angle;
-	V3f_t ray_dir = (V3f_t) {xx, yy, -1};
-	ray->origin = cam->positon;
-	ray->direction = normalize_v3(ray_dir);
+  ray->direction = v3f(xx, yy, -1);
+  mult_dir_v3_mat44_f(&ray->direction, &cam->c2w, &ray->direction);
+  ray->direction = normalize_v3(ray->direction);
+	ray->origin = cam->position;
 	return;
+}
+
+M44f_t get_cam2w_mat44f(camera_t *cam) {
+  float sa = sinf(cam->rotation.x);
+  float ca = cosf(cam->rotation.x);
+  float sb = sinf(cam->rotation.y);
+  float cb = cosf(cam->rotation.y);
+
+  V3f_t forward = v3f(ca*cb, cb*sa, sb);
+  V3f_t right = v3f(-sa, ca, 0.0f);
+  V3f_t up = cross_v3(forward, right);
+
+  M44f_t cam_to_world = (M44f_t){0};
+  cam_to_world.mat[0][0] = right.x;
+  cam_to_world.mat[0][1] = right.y;
+  cam_to_world.mat[0][2] = right.z;
+  cam_to_world.mat[1][0] = up.x;
+  cam_to_world.mat[1][1] = up.y;
+  cam_to_world.mat[1][2] = up.z;
+  cam_to_world.mat[2][0] = forward.x;
+  cam_to_world.mat[2][1] = forward.y;
+  cam_to_world.mat[2][2] = forward.z;
+  cam_to_world.mat[3][0] = cam->position.x;
+  cam_to_world.mat[3][1] = cam->position.y;
+  cam_to_world.mat[3][2] = cam->position.z;
+	cam_to_world.mat[3][3] = 1.0f;
+
+	return cam_to_world;
 }
 
 M44f_t get_lookat_mat44f(V3f_t *from, V3f_t *to) {
