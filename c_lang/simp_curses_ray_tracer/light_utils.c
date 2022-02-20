@@ -1,6 +1,36 @@
 #include "light_utils.h"
 #include "utils.h"
 
+void get_light_properties(light_t *lgt, V3f_t *p_hit, V3f_t *sray_dir, float *L2, float *int_coef) {
+	switch (lgt->type) {
+		case DIRECT: {
+			*L2 = INFINITY;
+			*sray_dir = neg_v3(lgt->direction);
+			*int_coef = 1.0f;
+			return;
+		}
+		case POINT: {
+			*sray_dir = diff_v3(lgt->position, *p_hit);
+			*L2 = len_sq_v3(*sray_dir);
+			float l = sqrtf(*L2);
+			*sray_dir = mul_v3_f(*sray_dir, 1/l);
+			*int_coef = 1 / (lgt->kc + l * lgt->kl + *L2 * lgt->kq);
+			return;
+		}
+		case SPOT: {
+			*sray_dir = diff_v3(lgt->position, *p_hit);
+			*L2 = len_sq_v3(*sray_dir);
+			float l = sqrtf(*L2);
+			*sray_dir = mul_v3_f(*sray_dir, 1/l);
+			*int_coef = powf(MAX(-dot_v3(*sray_dir, lgt->direction), 0), lgt->kp)
+										/ (lgt->kc + l * lgt->kl + *L2 * lgt->kq);
+			return;
+		}
+		default:
+			return;
+	}
+}
+
 V3f_t reflect(V3f_t *dir, V3f_t *norm) {
 	return normalize_v3(
 			diff_v3(

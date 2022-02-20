@@ -19,8 +19,8 @@ void pixels2file(options_t *options, V3f_t *pixels) {
 	free(ppm);
 }
 
-int len = 10;
-char *brightness = " .-:+*=#%@";
+int len = 9;
+char *brightness = " .:+*=#%@";
 
 void init_screen(options_t *options) {
 	initscr();

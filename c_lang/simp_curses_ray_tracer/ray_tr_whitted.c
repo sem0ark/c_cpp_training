@@ -92,6 +92,7 @@ V3f_t cast_ray(
 			V3f_t spec_color = (V3f_t){0};
 
 			ray_t shadow_ray;
+			float L2, int_coef;
 
 			// Using Phong illumination model
 			shadow_ray.origin = (dot_v3(ray->direction, norm) < 0) ?
@@ -100,9 +101,8 @@ V3f_t cast_ray(
 
 			// loop over all lights
 			for (int i=0; i<lights_size; i++) {
-				shadow_ray.direction = diff_v3(lights[i]->position, hit_point);
-				float L2 = len_sq_v3(shadow_ray.direction);
-				shadow_ray.direction = mul_v3_f(shadow_ray.direction, 1/sqrtf(L2));
+				get_light_properties(lights[i], &hit_point, &shadow_ray.direction, &L2, &int_coef);
+				if (int_coef < 0.001) continue;
 
 				V3f_t H_vec = normalize_v3(diff_v3(shadow_ray.direction, ray->direction));
 
@@ -110,16 +110,19 @@ V3f_t cast_ray(
 				float t_nears = INFINITY;
 
 				int in_shadow = trace(&shadow_ray, objects, obj_size,
-															&t_nears, &index, &uv, &shadow_obj) && t_nears*t_nears < L2;
+															&t_nears, &index, &uv, &shadow_obj)
+												&& t_nears*t_nears < L2;
 
 				float ldotn = MAX(dot_v3(shadow_ray.direction, norm), 0);
 
-				diff_color = sum_v3(diff_color, mul_v3_f(lights[i]->intensity, ldotn * (1 - in_shadow)));
+				diff_color = sum_v3(diff_color, mul_v3_f(lights[i]->intensity,
+														int_coef * ldotn * (1 - in_shadow)));
+
 				spec_color = sum_v3(spec_color,
 						mul_v3_f(lights[i]->intensity,
 							powf(MAX(dot_v3(norm, H_vec), 0),
 								hit_object->com.material->specular_exp)
-							* (ldotn > 0) * (1 - in_shadow)));
+									* int_coef * (ldotn > 0) * (1 - in_shadow)));
 			}
 
 			obj_lighted_color = sum_v3(
