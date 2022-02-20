@@ -32,7 +32,7 @@ V3f_t inv_v3(V3f_t a)                { return (V3f_t) {1.0f/a.x, 1.0f/a.y, 1.0f/
 V3f_t neg_v3(V3f_t a)                { return (V3f_t) {-a.x, -a.y, -a.z}; }
 V3f_t normalize_v3(V3f_t a)          { return mul_v3_f(a, 1/len_v3(a)); }
 V3f_t cross_v3(V3f_t a, V3f_t b) {
-    return (V3f_t){a.y*b.z-a.z*b.y, a.y*b.x-a.x*b.z, a.x*b.y-a.y*b.z};
+    return (V3f_t){a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x};
 }
 V3f_t clamp_v3(V3f_t a, float dw, float hi) {
   return (V3f_t) {CLAMP(a.x, dw, hi), CLAMP(a.y, dw, hi), CLAMP(a.z, dw, hi)};

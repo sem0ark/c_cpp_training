@@ -43,10 +43,10 @@ void test_whitted(void) {
 	srand(time(NULL));
 
 	options_t options = (options_t) {
-		.width = 1280,
-		.height = 960,
+		.width = 100,
+		.height = 100,
 		.console_ch_ratio = 0.5f,
-		.aa_coef = 3,
+		.aa_coef = 4,
 		.fov = 40.0f,
 		.max_depth = 3,
 		.background_color = v3f_s(0.0f),
@@ -58,10 +58,11 @@ void test_whitted(void) {
 
 	camera_t cam = {
 		.position = v3f(0, 1, 1),
-		.rotation = v3f(0,0.1,0),
+		.rotation = v3f(M_PI,0.0,0),
 		.fov = 45,
 	};
-	cam.c2w = get_cam2w_mat44f(&cam);
+	set_direction(&cam);
+	//cam.c2w = get_cam2w_mat44f(&cam);
 
 
 	V3f_t obj_col = v3f_s(1.0);//v3f(0.3f, 0.7f, 0.7f);
@@ -82,11 +83,11 @@ void test_whitted(void) {
 	m2.pattern_type = PLAIN;
 	m2.ior = 1.52f;
 	m2.specular_exp = 55.0f;
-	m2.d_col   = mul_v3_f(obj_col_2, 0.1f);
-	m2.e_col   = mul_v3_f(obj_col_2, 0.1f);
+	m2.d_col   = mul_v3_f(obj_col_2, 0.2f);
+	m2.e_col   = mul_v3_f(obj_col_2, 0.0f);
 	m2.rfl_col = mul_v3_f(obj_col_2, 1.0f);
 	m2.rfr_col = mul_v3_f(obj_col_2, 1.0f);
-	m2.s_col   = mul_v3_f(obj_col_2, 0.05f);
+	m2.s_col   = mul_v3_f(obj_col_2, 0.2f);
 
 	V3f_t obj_col_3 = v3f(0.8f, 0.6f, 0.6f);
 	Material_t m3 = (Material_t){0};
@@ -154,13 +155,15 @@ void test_whitted(void) {
 	};
 	}
 */
+
 	V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
-	for (int i=0; i<200; i++) {
+	for (int i=0; i<1000; i++) {
 		render(&options, &cam, pixels, objects, No, lights, Nl);
 		print_screen(&options, pixels);
-		cam.rotation.y -= 0.05;
-		cam.c2w = get_cam2w_mat44f(&cam);
-		mvprintw(0,0,"%f", cam.rotation.x);
+		mvprintw(0,0,"%f\n", cam.rotation.x);
+		cam.rotation.x -= 0.02;
+		set_direction(&cam);
+		//cam.c2w = get_cam2w_mat44f(&cam);
 		refresh();
 	}
 

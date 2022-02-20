@@ -9,11 +9,29 @@ void get_ray(camera_t *cam, float inv_w, float inv_h, float asp_ratio, float cha
 	float angle = tan(M_PI * 0.5 * cam->fov / 180.0);
 	float xx = (2*((x+0.5)*inv_w)-1)*angle*asp_ratio * char_ratio;
 	float yy = (1 - 2*((y+0.5)*inv_h)) * angle;
-  ray->direction = v3f(xx, yy, -1);
-  mult_dir_v3_mat44_f(&ray->direction, &cam->c2w, &ray->direction);
-  ray->direction = normalize_v3(ray->direction);
+
+  ray->direction = normalize_v3(sum_v3(cam->fwd,
+                      sum_v3(mul_v3_f(cam->rgt, -xx),
+                          mul_v3_f(cam->up, yy))));
+
+//  mult_dir_v3_mat44_f(&ray->direction, &cam->c2w, &ray->direction);
+
+//  ray->direction = normalize_v3(ray->direction);
 	ray->origin = cam->position;
 	return;
+}
+
+void set_direction(camera_t *cam) {
+  float sa = sin(cam->rotation.x);
+  float ca = cos(cam->rotation.x);
+  float sb = sin(cam->rotation.y);
+  float cb = cos(cam->rotation.y);
+
+  cam->fwd = v3f(ca*cb, cb*sa, sb);
+  cam->rgt = v3f(-sa, ca, 0.0);
+  cam->up = cross_v3(cam->fwd, cam->rgt);
+
+  return;
 }
 
 M44f_t get_cam2w_mat44f(camera_t *cam) {
@@ -22,9 +40,13 @@ M44f_t get_cam2w_mat44f(camera_t *cam) {
   double sb = sin(cam->rotation.y);
   double cb = cos(cam->rotation.y);
 
-  V3d_t forward = v3d(ca*cb, cb*sa, -sb);
-  V3d_t right = v3d(-sb, ca, 0.0);
-  V3d_t up = v3d(ca*sb, sa*sb, cb);
+  V3d_t forward = v3d(ca*cb, cb*sa, sb);
+  V3d_t right = v3d(-sa, ca, 0.0);
+  V3d_t up = cross_v3d(forward, right);
+
+  sv_d(&forward);
+  sv_d(&right);
+  sv_d(&up);
 
   M44f_t cam_to_world = (M44f_t){0};
   cam_to_world.mat[0][0] = right.x;
@@ -41,7 +63,7 @@ M44f_t get_cam2w_mat44f(camera_t *cam) {
   cam_to_world.mat[3][2] = cam->position.z;
 	cam_to_world.mat[3][3] = 1.0f;
 
-	return cam_to_world;
+  return cam_to_world;
 }
 
 M44f_t get_lookat_mat44f(V3f_t *from, V3f_t *to) {
