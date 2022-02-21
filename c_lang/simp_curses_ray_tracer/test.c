@@ -43,13 +43,13 @@ void test_whitted(void) {
 	srand(time(NULL));
 
 	options_t options = (options_t) {
-		.width = 1240,
-		.height = 960,
-		.console_ch_ratio = 1.0f,
+		.width = 400,
+		.height = 400,
+		.console_ch_ratio = 0.5f,
 		.aa_coef = 3,
 		.fov = 40.0f,
-		.max_depth = 3,
-		.background_color = v3f_s(0.0f),
+		.max_depth = 2,
+		.background_color = v3f_s(0.1f),
 		.ambient_occlusion = v3f_s(0.0f),
 		.bias = 1e-4,
 	};
@@ -94,51 +94,51 @@ void test_whitted(void) {
 	m3.pattern_type = PLAIN;
 	m3.ior = 1.52f;
 	m3.specular_exp = 55.0f;
-	m3.d_col   = mul_v3_f(obj_col_3, 0.1f);
+	m3.d_col   = mul_v3_f(obj_col_3, 0.2f);
 	m3.e_col   = mul_v3_f(obj_col_3, 0.0f);
 	m3.rfl_col = mul_v3_f(obj_col_3, 1.0f);
 	m3.rfr_col = mul_v3_f(obj_col_3, 1.0f);
-	m3.s_col   = mul_v3_f(obj_col_3, 0.1f);
+	m3.s_col   = mul_v3_f(obj_col_3, 0.2f);
 
 
-	int Nl = 3;
+	int Nl = 1;
 	light_t **lights = (light_t **)malloc(sizeof(light_t *)*Nl);
 	for (int i=0; i<Nl; i++) lights[i] = (light_t *)malloc(sizeof(light_t) * 1);
 
 	*lights[0] = (light_t){
 		.type = POINT,
-		.direction = normalize_v3(v3f(0.0f, 0.0f, -1.0f)),
-		.intensity = v3f(0.3f,0.3f,0.3f),
-		.position = v3f(0, 0, 10),
+		.direction = normalize_v3(v3f(0.0f, 0.4f, -1.0f)),
+		.intensity = v3f_s(0.6f),//v3f(0.3f,0.3f,0.3f),
+		.position = v3f(0, 0, 100),
 		.kc = 1.0f,
-		.kl = 0.3f,
+		.kl = 0.0f,
 		.kq = 0.0f,
-		.kp = 15.0f,
+		.kp = 5.0f,
 	};
-
+/*
 	*lights[1] = (light_t){
-		.type = SPOT,
-		.direction = normalize_v3(v3f(0.0f, -0.2f, -1.0f)),
+		.type = POINT,
+		.direction = normalize_v3(v3f(0.0f, -0.4f, -1.0f)),
 		.intensity = v3f(0.0f,0.0f,1.0f),
 		.position = v3f(0, 2, 10),
 		.kc = 1.0f,
 		.kl = 0.0f,
-		.kq = 0.0f,
-		.kp = 15.0f,
+		.kq = 0.01f,
+		.kp = 25.0f,
 	};
 
 	*lights[2] = (light_t){
-		.type = SPOT,
-		.direction = normalize_v3(v3f(0.0f, -0.4f, -1.0f)),
+		.type = POINT,
+		.direction = normalize_v3(v3f(0.2f, -0.4f, -1.0f)),
 		.intensity = v3f(0.0f,1.0f,0.0f),
 		.position = v3f(0, 4, 10),
 		.kc = 1.0f,
 		.kl = 0.0f,
-		.kq = 0.0f,
-		.kp = 15.0f
+		.kq = 0.01f,
+		.kp = 25.0f
 	};
-
-	int No = 3;
+*/
+	int No = 10;
 	object_t **objects = (object_t **)malloc(sizeof(object_t *)*No);
 	for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
 
@@ -176,8 +176,8 @@ void test_whitted(void) {
 			.o_sphr = (sphere_t) {
 				.type = SPHERE,
 				.material = &m2,
-				.center = v3f(frand_range(-5, -3), frand_range(-3.0, 3.0), frand_range(1, 2)),
-				.radius = frand_range(0.6, 1),
+				.center = v3f(frand_range(-20.0f, -20.0f), frand_range(-20.0f, 20.0f), frand_range(3.0f, 10.0f)),
+				.radius = frand_range(1, 3),
 			}
 	};
 	}
@@ -186,27 +186,74 @@ void test_whitted(void) {
 	V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
 
 	/* show picture flie*/
+	/*
 	render(&options, &cam, pixels, objects, No, lights, Nl);
 	pixels2file(&options, pixels);
-
+*/
 	/* ASCII animation */
-	/*
+	double dt;
+	double fps = 24.0;
+
+	double mov_spd = 0.03;
+	double rot_spd = 0.01;
+
+	double min_dt = 1.0/fps;
+	int cur_ch;
+	int running = 1;
 	init_screen(&options);
-	for (int i=0; i<1000; i++) {
+
+	clock_t prev_time = clock();
+	clock_t cur_time;
+	while (running) {
+		cur_time = clock();
+		dt = (cur_time - prev_time) * 1.0 / CLOCKS_PER_SEC;
+		if (dt < min_dt) continue;
 		render(&options, &cam, pixels, objects, No, lights, Nl);
 		print_screen(&options, pixels);
-		mvprintw(0,0,"%d %d %d", options.width, options.height, options.aa_coef);
-		cam.rotation.x -= 0.02;
-		cam.rotation.y -= 0.005;
-		cam.rotation.y = MAX(-M_PI/3.0f, cam.rotation.y);
-		cam.position.z += 0.01;
-		set_direction(&cam);
-		refresh();
-	}
-	getch();
-	shut_down();
-*/
 
+		cur_ch = getch();
+		switch(cur_ch) {
+			case 'q':
+				running = 0;
+				break;
+			case 'w':
+				cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd,  dt * mov_spd));
+				break;
+			case 's':
+				cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd));
+				break;
+			case 'a':
+				cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt,  dt * mov_spd));
+				break;
+			case 'd':
+				cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, -dt * mov_spd));
+				break;
+			case 'r':
+				cam.position.z += dt * mov_spd;
+				break;
+			case 'f':
+				cam.position.z -= dt * mov_spd;
+				break;
+
+			case 'u':
+				cam.rotation.y += rot_spd;
+				break;
+			case 'j':
+				cam.rotation.y -= rot_spd;
+				break;
+			case 'h':
+				cam.rotation.x += rot_spd * 3;
+				break;
+			case 'k':
+				cam.rotation.x -= rot_spd * 3;
+				break;
+			default:
+				break;
+		}
+		set_direction(&cam);
+	}
+
+	shut_down();
 
 	for (int i=0; i<Nl; i++) free(lights[i]);
 	free(lights);

@@ -20,11 +20,14 @@ void pixels2file(options_t *options, V3f_t *pixels) {
 }
 
 int len = 9;
-char *brightness = " .:+*=#%@";
+char *brightness = " .:+=*#%@";
 
 void init_screen(options_t *options) {
+	keypad(NULL, TRUE);
 	initscr();
+	clear();
 	noecho();
+	cbreak();
 	curs_set(FALSE);
 	getmaxyx(stdscr, options->height, options->width);
 }
