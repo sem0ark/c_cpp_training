@@ -12,6 +12,7 @@ double cTimer_elapsed(cTimer_t *tmr, char frame) {
   double elapsed = frame ?
     (tmr->current - tmr->frame_start) / (double) CLOCKS_PER_SEC :
     (tmr->current - tmr->process_start) / (double) CLOCKS_PER_SEC;
+  tmr->frame_start = tmr->current;
   return elapsed;
 }
 

@@ -4,7 +4,9 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <linux/input.h>
+#include <errno.h>
 
 #include "kb_linux.h"
 
@@ -18,6 +20,7 @@ void kb_readEv(cKeyboard_t *kb) {
 }
 
 void* kb_loop(void *obj) {
+  printf("Hello it is thread!\n");
 	while (((cKeyboard_t *)obj)->active) {
 		kb_readEv((cKeyboard_t *)obj);
 	}
@@ -32,6 +35,7 @@ void cKeyboard_init(cKeyboard_t *kb) {
   kb->keyboard_fd = open(KEYBOARD_DEV, O_RDONLY | O_NONBLOCK);
   if (kb->keyboard_fd > 0) {
     ioctl(kb->keyboard_fd, EVIOCGNAME(256), kb->name);
+    printf("  Name: %s\n", kb->name);
     kb->active = 1;
     pthread_create(&kb->thrd, 0, &kb_loop, kb);
   }
@@ -43,8 +47,6 @@ void cKeyboard_shutdown(cKeyboard_t *kb) {
     pthread_join(kb->thrd, 0);
     close(kb->keyboard_fd);
   }
-  free(kb->keyboard_st);
-  free(kb->keyboard_ev);
   kb->keyboard_fd = 0;
 }
 

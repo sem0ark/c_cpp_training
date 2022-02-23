@@ -5,12 +5,13 @@
 #include "ray_tr_whitted.h"
 #include "light_utils.h"
 #include "screen.h"
+#include "timer.h"
+#include "kb_linux.h"
 
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ncurses.h>
-
+#include <linux/input.h>
 
 void test_vectors(void) {
 	// testing vectors
@@ -187,32 +188,43 @@ void test_whitted(void) {
 	V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
 
 	/* show picture flie*/
-
+/*
 	render(&options, &cam, pixels, objects, No, lights, Nl);
 	pixels2file(&options, pixels);
+*/
 
 	/* ASCII animation */
-/*	double dt;
+	double dt;
 	double fps = 24.0;
+
+	cTimer_t timer;
+	cTimer_init(&timer);
+
+	cKeyboard_t kb;
+	cKeyboard_init(&kb);
 
 	double mov_spd = 0.03;
 	double rot_spd = 0.01;
 
 	double min_dt = 1.0/fps;
-	int cur_ch;
 	int running = 1;
 	init_screen(&options);
 
-	clock_t prev_time = clock();
-	clock_t cur_time;
 	while (running) {
-		cur_time = clock();
+		/*cur_time = clock();
 		dt = (cur_time - prev_time) * 1.0 / CLOCKS_PER_SEC;
-		if (dt < min_dt) continue;
+		if (dt < min_dt) continue;*/
+		dt = cTimer_elapsed(&timer, 1);
+		if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= rot_spd; }
+
+		if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
+
 		render(&options, &cam, pixels, objects, No, lights, Nl);
 		print_screen(&options, pixels);
-
-		cur_ch = getch();
+/*		cur_ch = getch();
 		switch(cur_ch) {
 			case 'q':
 				running = 0;
@@ -250,12 +262,13 @@ void test_whitted(void) {
 				break;
 			default:
 				break;
-		}
+		} */
 		set_direction(&cam);
 	}
 
 	shut_down();
-*/
+	cKeyboard_shutdown(&kb);
+
 	for (int i=0; i<Nl; i++) free(lights[i]);
 	free(lights);
 

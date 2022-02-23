@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <linux/input.h>
 
-#define KEYBOARD_DEV "/dev/input/event0"
+#define KEYBOARD_DEV "/dev/input/event2"
 
 struct keyboard_state {
 	int keys[KEY_CNT];

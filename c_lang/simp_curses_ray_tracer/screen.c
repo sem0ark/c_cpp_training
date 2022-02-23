@@ -24,7 +24,6 @@ int len = 9;
 char *brightness = " .:+=*#%@";
 
 void init_screen(options_t *options) {
-	keypad(NULL, TRUE);
 	initscr();
 	clear();
 	noecho();
