@@ -35,6 +35,24 @@ int intersect_sphere(object_t *obj, ray_t *ray, float *intsct_coef) {
 #endif
 }
 
+int intersect_disk(object_t *obj, ray_t *ray, float *intsct_coef) {
+	float den = dot_v3(obj->o_pln.norm, ray->direction);
+	if (fabsf(den) > 1e-6){
+		*intsct_coef = dot_v3(
+				diff_v3(obj->o_pln.center, ray->origin),
+				obj->o_pln.norm) / den;
+		float d2 = len_sq_v3(
+				diff_v3(
+					sum_v3(ray->origin,
+						mul_v3_f(ray->direction, *intsct_coef)),
+					obj->o_dsk.center));
+
+		return (*intsct_coef>=0) && (d2 <= obj->o_dsk.radius * obj->o_dsk.radius);
+	}
+	return 0;
+}
+
+
 int intersect_plane(object_t *obj, ray_t *ray, float *intsct_coef) {
 	float den = dot_v3(obj->o_pln.norm, ray->direction);
 	if (fabsf(den) > 1e-6){
@@ -46,8 +64,11 @@ int intersect_plane(object_t *obj, ray_t *ray, float *intsct_coef) {
 	return 0;
 }
 
-/* Not implemented */
-int intersect_cube(object_t *obj, ray_t *ray, float *intsct_coef) {return 0;}
+/* Intersect AABox */
+int intersect_aabox(object_t *obj, ray_t *ray, float *intsct_coef) {
+
+	return 0;
+}
 
 /* Not implemented */
 int intersect_torus(object_t *obj, ray_t *ray, float *intsct_coef) {return 0;}
@@ -60,8 +81,10 @@ int intersect(object_t *obj, ray_t *ray, float *intsct_coef, int *index, V2f_t *
 			return intersect_sphere(obj, ray, intsct_coef);
 		case PLANE:
 			return intersect_plane(obj, ray, intsct_coef);
-		case CUBE:
-			return  intersect_cube(obj, ray, intsct_coef);
+		case DISK:
+			return intersect_disk(obj, ray, intsct_coef);
+		case AABOX:
+			return  intersect_aabox(obj, ray, intsct_coef);
 		case TORUS:
 			return intersect_torus(obj, ray, intsct_coef);
 		default:
@@ -105,12 +128,27 @@ void get_surf_properties_shpr(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *inde
 
 void get_surf_properties_pln(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
 	*N = obj->o_pln.norm;
-	st->x = fmodf(fabsf(p_hit->x - obj->com.center.x), 2)/2.0f;
-	st->y = fmodf(fabsf(p_hit->y - obj->com.center.y), 2)/2.0f;
+	float dx = p_hit->x - obj->com.center.x;
+	float dy = p_hit->y - obj->com.center.y;
+	st->x = fmodf(fabsf(dx), 2)/2.0f;
+	st->y = fmodf(fabsf(dy), 2)/2.0f;
+	if (dx < 0) { st->x = 1 - st->x; }
+	if (dy < 0) { st->y = 1 - st->y; }
 	return;
 }
 
-void get_surf_properties_cb(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
+void get_surf_properties_dsk(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
+	*N = obj->o_pln.norm;
+	float dx = p_hit->x - obj->com.center.x;
+	float dy = p_hit->y - obj->com.center.y;
+	st->x = fmodf(fabsf(dx), 2)/2.0f;
+	st->y = fmodf(fabsf(dy), 2)/2.0f;
+	if (dx < 0) { st->x = 1 - st->x; }
+	if (dy < 0) { st->y = 1 - st->y; }
+	return;
+}
+
+void get_surf_properties_aabox(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2f_t *uv, V3f_t *N, V2f_t *st) {
 	return;
 }
 
@@ -126,8 +164,11 @@ void get_surf_properties(object_t *obj, V3f_t *p_hit, V3f_t *dir, int *index, V2
 		case PLANE:
 			get_surf_properties_pln(obj, p_hit, dir, index, uv, N, st);
 			break;
-		case CUBE:
-			get_surf_properties_cb(obj, p_hit, dir, index, uv, N, st);
+		case DISK:
+			get_surf_properties_dsk(obj, p_hit, dir, index, uv, N, st);
+			break;
+		case AABOX:
+			get_surf_properties_aabox(obj, p_hit, dir, index, uv, N, st);
 			break;
 		case TORUS:
 			get_surf_properties_trs(obj, p_hit, dir, index, uv, N, st);

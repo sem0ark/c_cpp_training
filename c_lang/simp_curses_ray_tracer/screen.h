@@ -10,4 +10,5 @@ void init_screen(options_t *options);
 void print_screen(options_t *options, V3f_t *pixels);
 /* Shut down ncurses screen */
 void shut_down(void);
+
 #endif

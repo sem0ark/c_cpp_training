@@ -45,7 +45,7 @@ void test_whitted(void) {
 	options_t options = (options_t) {
 		.width = 400,
 		.height = 400,
-		.console_ch_ratio = 0.5f,
+		.console_ch_ratio = 1.0f,
 		.aa_coef = 3,
 		.fov = 40.0f,
 		.max_depth = 2,
@@ -56,8 +56,8 @@ void test_whitted(void) {
 
 
 	camera_t cam = {
-		.position = v3f(0, 1, 1),
-		.rotation = v3f(M_PI-0.1,0.0,0),
+		.position = v3f(0, 0, 1),
+		.rotation = v3f(0,0,0),
 		.fov = 45,
 	};
 	set_direction(&cam);
@@ -92,7 +92,7 @@ void test_whitted(void) {
 	Material_t m3 = (Material_t){0};
 	m3.type = DIFF_GLOSSY | REFLECT | REFRACT;
 	m3.pattern_type = PLAIN;
-	m3.ior = 1.52f;
+	m3.ior = 1.12f;
 	m3.specular_exp = 55.0f;
 	m3.d_col   = mul_v3_f(obj_col_3, 0.2f);
 	m3.e_col   = mul_v3_f(obj_col_3, 0.0f);
@@ -106,9 +106,9 @@ void test_whitted(void) {
 	for (int i=0; i<Nl; i++) lights[i] = (light_t *)malloc(sizeof(light_t) * 1);
 
 	*lights[0] = (light_t){
-		.type = POINT,
+		.type = DIRECT,
 		.direction = normalize_v3(v3f(0.0f, 0.4f, -1.0f)),
-		.intensity = v3f_s(0.6f),//v3f(0.3f,0.3f,0.3f),
+		.intensity = v3f_s(1.0f),//v3f(0.3f,0.3f,0.3f),
 		.position = v3f(0, 0, 100),
 		.kc = 1.0f,
 		.kl = 0.0f,
@@ -138,39 +138,40 @@ void test_whitted(void) {
 		.kp = 25.0f
 	};
 */
-	int No = 10;
+	int No = 3;
 	object_t **objects = (object_t **)malloc(sizeof(object_t *)*No);
 	for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
 
 	*objects[0] = (object_t) {
-		.o_pln = (plane_t) {
-			.type = PLANE,
+		.o_dsk = (disk_t) {
+			.type = DISK,
 			.material = &m1,
-			.center = v3f(100,100,0),
+			.center = v3f(10,0,0),
 			.norm = normalize_v3(v3f(0,0,1)),
+			.radius = 5.0f,
 		}
 	};
-/*
+
 	*objects[1] = (object_t) {
 		.o_sphr = (sphere_t) {
 			.type = SPHERE,
 			.material = &m2,
-			.center = v3f(-7,0,2),
-			.radius = 2.0f,
+			.center = v3f(7,0,2),
+			.radius = 1.0f,
 		}
 	};
-*/
-/*
+
+
 	*objects[2] = (object_t) {
 		.o_sphr = (sphere_t) {
 			.type = SPHERE,
 			.material = &m3,
-			.center = v3f(-6,0.3,2),
-			.radius = 0.4f,
+			.center = v3f(6,1,2),
+			.radius = 1.0f,
 		}
 	};
-*/
 
+/*
 	for (int i=1; i < No; i++) {
 		*objects[i] = (object_t) {
 			.o_sphr = (sphere_t) {
@@ -181,17 +182,17 @@ void test_whitted(void) {
 			}
 	};
 	}
-
+*/
 
 	V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
 
 	/* show picture flie*/
-	/*
+
 	render(&options, &cam, pixels, objects, No, lights, Nl);
 	pixels2file(&options, pixels);
-*/
+
 	/* ASCII animation */
-	double dt;
+/*	double dt;
 	double fps = 24.0;
 
 	double mov_spd = 0.03;
@@ -254,7 +255,7 @@ void test_whitted(void) {
 	}
 
 	shut_down();
-
+*/
 	for (int i=0; i<Nl; i++) free(lights[i]);
 	free(lights);
 
