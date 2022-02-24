@@ -30,8 +30,9 @@ void* kb_loop(void *obj) {
 void cKeyboard_init(cKeyboard_t *kb) {
   kb->active = 0;
   kb->keyboard_fd = 0;
-  kb->keyboard_ev = &(struct input_event) {0};
-  kb->keyboard_st = &(struct keyboard_state) {0};
+  kb->keyboard_ev = &((struct input_event) {0});
+  kb->keyboard_st = &((struct keyboard_state) {0});
+
   kb->keyboard_fd = open(KEYBOARD_DEV, O_RDONLY | O_NONBLOCK);
   if (kb->keyboard_fd > 0) {
     ioctl(kb->keyboard_fd, EVIOCGNAME(256), kb->name);

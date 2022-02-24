@@ -46,7 +46,7 @@ void test_whitted(void) {
 	options_t options = (options_t) {
 		.width = 400,
 		.height = 400,
-		.console_ch_ratio = 1.0f,
+		.console_ch_ratio = 0.5f,
 		.aa_coef = 3,
 		.fov = 40.0f,
 		.max_depth = 2,
@@ -144,12 +144,11 @@ void test_whitted(void) {
 	for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
 
 	*objects[0] = (object_t) {
-		.o_dsk = (disk_t) {
-			.type = DISK,
+		.o_pln = (plane_t) {
+			.type = PLANE,
 			.material = &m1,
 			.center = v3f(10,0,0),
 			.norm = normalize_v3(v3f(0,0,1)),
-			.radius = 5.0f,
 		}
 	};
 
@@ -203,8 +202,8 @@ void test_whitted(void) {
 	cKeyboard_t kb;
 	cKeyboard_init(&kb);
 
-	double mov_spd = 0.03;
-	double rot_spd = 0.01;
+	double mov_spd = 3;
+	double rot_spd = M_PI * 0.5;
 
 	double min_dt = 1.0/fps;
 	int running = 1;
@@ -215,55 +214,24 @@ void test_whitted(void) {
 		dt = (cur_time - prev_time) * 1.0 / CLOCKS_PER_SEC;
 		if (dt < min_dt) continue;*/
 		dt = cTimer_elapsed(&timer, 1);
-		if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += rot_spd; }
-		if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= rot_spd; }
-		if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += rot_spd; }
-		if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= rot_spd; }
+
+		if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += dt * rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= dt * rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += dt * rot_spd; }
+		if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= dt * rot_spd; }
 
 		if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
+/*
+		if (cKeyboard_getKeyState(&kb, KEY_W)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, dt * mov_spd)); }
+		if (cKeyboard_getKeyState(&kb, KEY_S)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd)); }
+		if (cKeyboard_getKeyState(&kb, KEY_A)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, -dt * mov_spd)); }
+		if (cKeyboard_getKeyState(&kb, KEY_D)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, dt * mov_spd)); }
+*/
+		set_direction(&cam);
 
 		render(&options, &cam, pixels, objects, No, lights, Nl);
 		print_screen(&options, pixels);
-/*		cur_ch = getch();
-		switch(cur_ch) {
-			case 'q':
-				running = 0;
-				break;
-			case 'w':
-				cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd,  dt * mov_spd));
-				break;
-			case 's':
-				cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd));
-				break;
-			case 'a':
-				cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt,  dt * mov_spd));
-				break;
-			case 'd':
-				cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, -dt * mov_spd));
-				break;
-			case 'r':
-				cam.position.z += dt * mov_spd;
-				break;
-			case 'f':
-				cam.position.z -= dt * mov_spd;
-				break;
 
-			case 'u':
-				cam.rotation.y += rot_spd;
-				break;
-			case 'j':
-				cam.rotation.y -= rot_spd;
-				break;
-			case 'h':
-				cam.rotation.x += rot_spd * 3;
-				break;
-			case 'k':
-				cam.rotation.x -= rot_spd * 3;
-				break;
-			default:
-				break;
-		} */
-		set_direction(&cam);
 	}
 
 	shut_down();
