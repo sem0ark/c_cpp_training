@@ -6,11 +6,11 @@
 
 /* Camera config structure */
 typedef struct {
-	V3f_t position;
-	V3f_t rotation;
-	M44f_t c2w;
-	V3f_t fwd, rgt, up;
-	float fov;
+  V3f_t position;
+  V3f_t rotation;
+  M44f_t c2w;
+  V3f_t fwd, rgt, up;
+  float fov;
 } camera_t;
 
 /* returns ray from camera */

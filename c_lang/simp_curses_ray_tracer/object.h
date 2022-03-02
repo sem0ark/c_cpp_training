@@ -8,64 +8,64 @@
 #include "light_utils.h"
 
 enum OBJECT_TYPE{
-	SPHERE = 1,
-	PLANE,
-	DISK,
-	AABOX,
-	TORUS
+  SPHERE = 1,
+  PLANE,
+  DISK,
+  AABOX,
+  TORUS
 };
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 } object_common_t;
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 
-	float radius;
+  float radius;
 } sphere_t;
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 
-	V3f_t norm; // normal vector to plane
+  V3f_t norm; // normal vector to plane
 } plane_t;
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 
-	V3f_t norm; 	// normal vector to plane
-	float radius; // radius of disk
+  V3f_t norm;   // normal vector to plane
+  float radius; // radius of disk
 } disk_t;
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 } cube_t;
 
 typedef struct {
-	enum OBJECT_TYPE type;
-	Material_t *material;
-	V3f_t center;
+  enum OBJECT_TYPE type;
+  Material_t *material;
+  V3f_t center;
 } torus_t;
 
 /* compound struct for objects */
 typedef union {
-	object_common_t com;
-	sphere_t o_sphr;
-	plane_t o_pln;
-	disk_t o_dsk;
-	cube_t o_cb;
-	torus_t o_trs;
+  object_common_t com;
+  sphere_t o_sphr;
+  plane_t o_pln;
+  disk_t o_dsk;
+  cube_t o_cb;
+  torus_t o_trs;
 } object_t;
 
 /* computes intersection coef for object */

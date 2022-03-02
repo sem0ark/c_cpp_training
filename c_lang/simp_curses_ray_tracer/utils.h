@@ -26,53 +26,53 @@
   ({ MAX(lo, MIN(hi, a)); })
 
 #define DEG2RAD(a) \
-	({ (float)(a) * M_PI / 180; })
+  ({ (float)(a) * M_PI / 180; })
 
 /* Inline functions */
 static inline float mix(float a, float b, float mix) {
-	return b*mix + a*(1-mix);
+  return b*mix + a*(1-mix);
 }
 
 static inline void swapf(float *a, float *b) {
-	float _tmp = *a; *a = *b; *b = _tmp;
+  float _tmp = *a; *a = *b; *b = _tmp;
 }
 
 /* Vector 3d struct float type */
 typedef struct Vec3f {
-	float x, y, z;
+  float x, y, z;
 } V3f_t;
 
 /* Vector 2d struct float type */
 typedef struct Vec2f {
-	float x, y;
+  float x, y;
 } V2f_t;
 
 /* Vector 3d struct double type */
 typedef struct Vec3d {
-	double x, y, z;
+  double x, y, z;
 } V3d_t;
 
 /* 4x4 Matrix struct float type */
 typedef struct Matrix44f {
-	float mat[4][4];
+  float mat[4][4];
 } M44f_t;
 
 /* 4x4 Matrix struct double type */
 typedef struct Matrix44d {
-	double mat[4][4];
+  double mat[4][4];
 } M44d_t;
 
 /* Structure for configuration */
 typedef struct Options {
-	int width;
-	int height;
-	float console_ch_ratio;
-	int aa_coef;
-	float fov;
-	int max_depth;
-	V3f_t background_color;
-	V3f_t ambient_occlusion;
-	float bias;
+  int width;
+  int height;
+  float console_ch_ratio;
+  int aa_coef;
+  float fov;
+  int max_depth;
+  V3f_t background_color;
+  V3f_t ambient_occlusion;
+  float bias;
 } options_t;
 
 
@@ -142,21 +142,21 @@ V2f_t mul_v2f_v(V2f_t a, V2f_t b);
 /* Matrix operations */
 /* Create Matrix 4x4 */
 M44f_t m44f(float a, float b,
-	float c, float d,
-	float e, float f,
+  float c, float d,
+  float e, float f,
   float g, float h,
   float i, float j,
-	float k, float l,
-	float m, float n,
-	float o, float p);
+  float k, float l,
+  float m, float n,
+  float o, float p);
 M44d_t m44d(double a, double b,
-	double c, double d,
-	double e, double f,
+  double c, double d,
+  double e, double f,
   double g, double h,
   double i, double j,
-	double k, double l,
-	double m, double n,
-	double o, double p);
+  double k, double l,
+  double m, double n,
+  double o, double p);
 
 /* Create unit Matrix 4x4 */
 M44f_t m44f_unit(void);

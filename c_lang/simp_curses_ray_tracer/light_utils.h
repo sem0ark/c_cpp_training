@@ -4,24 +4,24 @@
 #include "utils.h"
 
 enum LIGHT_TYPE {
-	DIRECT,
-	SPOT,
-	POINT,
+  DIRECT,
+  SPOT,
+  POINT,
 };
 
 /* compound struct type Ray */
 typedef struct {
-	V3f_t origin;
-	V3f_t direction;
+  V3f_t origin;
+  V3f_t direction;
 } ray_t;
 
 /* compound struct for light source */
 typedef struct {
-	enum LIGHT_TYPE type;
-	V3f_t position;
-	V3f_t intensity;
-	V3f_t direction;
-	float kq, kl, kc, kp;
+  enum LIGHT_TYPE type;
+  V3f_t position;
+  V3f_t intensity;
+  V3f_t direction;
+  float kq, kl, kc, kp;
 } light_t;
 
 /* Compute reflection of ray */
@@ -35,5 +35,5 @@ void fresnel(V3f_t *dir, V3f_t *norm, float ior, float *kr);
 
 /* Get light properties */
 void get_light_properties(light_t *, V3f_t *p_hit, V3f_t *shadow_ray_dir,
-													float *l_sq, float *intensity_coef);
+                          float *l_sq, float *intensity_coef);
 #endif
