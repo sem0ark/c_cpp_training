@@ -1,7 +1,13 @@
 
+int len = 9;
+char *brightness = " .:+=*#%@";
+
+
+#ifdef __linux__
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <ncurses.h>
+//#include <ncurses.h>
 
 #include "utils.h"
 
@@ -20,9 +26,6 @@ void pixels2file(options_t *options, V3f_t *pixels) {
   free(ppm);
 }
 
-int len = 9;
-char *brightness = " .:+=*#%@";
-
 void init_screen(options_t *options) {
   initscr();
   clear();
@@ -38,7 +41,7 @@ void print_screen(options_t *options, V3f_t *pixels) {
   V3f_t *pix = pixels;
   for (int i=0; i<c; i++) {
     float l = sqrt(len_sq_v3(*pix) / 3.0f);
-    addch(brightness[(int)CLAMP(len * l, 0, len-1)]);
+    putc(brightness[(int)CLAMP(len * l, 0, len-1)]);
     pix++;
   }
 
@@ -49,3 +52,8 @@ void shut_down(void) {
   endwin();
 }
 
+#endif
+
+#ifdef _WIN32
+
+#endif

@@ -1,6 +1,8 @@
 #ifndef KB_LINUX_H
 #define KB_LINUX_H
 
+#ifdef __linux__
+
 #include <pthread.h>
 #include <linux/input.h>
 
@@ -23,5 +25,7 @@ void cKeyboard_init(cKeyboard_t *kb);
 void cKeyboard_shutdown(cKeyboard_t *kb);
 
 int cKeyboard_getKeyState(cKeyboard_t *kb, int key);
+
+#endif
 
 #endif

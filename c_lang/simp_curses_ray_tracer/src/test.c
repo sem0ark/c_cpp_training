@@ -11,7 +11,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <linux/input.h>
+//#include <linux/input.h>
 
 void test_vectors(void) {
   // testing vectors
@@ -199,8 +199,8 @@ void test_whitted(void) {
   cTimer_t timer;
   cTimer_init(&timer);
 
-  cKeyboard_t kb;
-  cKeyboard_init(&kb);
+  // cKeyboard_t kb;
+  // cKeyboard_init(&kb);
 
   double mov_spd = 3;
   double rot_spd = M_PI * 0.5;
@@ -215,12 +215,12 @@ void test_whitted(void) {
     if (dt < min_dt) continue;*/
     dt = cTimer_elapsed(&timer, 1);
 
-    if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += dt * rot_spd; }
-    if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= dt * rot_spd; }
-    if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += dt * rot_spd; }
-    if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= dt * rot_spd; }
+    // if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += dt * rot_spd; }
+    // if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= dt * rot_spd; }
+    // if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += dt * rot_spd; }
+    // if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= dt * rot_spd; }
 
-    if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
+    // if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
 /*
     if (cKeyboard_getKeyState(&kb, KEY_W)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, dt * mov_spd)); }
     if (cKeyboard_getKeyState(&kb, KEY_S)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd)); }
@@ -235,7 +235,8 @@ void test_whitted(void) {
   }
 
   shut_down();
-  cKeyboard_shutdown(&kb);
+  
+  // cKeyboard_shutdown(&kb);
 
   for (int i=0; i<Nl; i++) free(lights[i]);
   free(lights);
