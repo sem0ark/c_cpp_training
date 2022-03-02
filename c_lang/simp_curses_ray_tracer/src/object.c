@@ -5,7 +5,6 @@
 #include "object.h"
 
 
-
 int intersect_sphere(object_t *obj, ray_t *ray, float *intsct_coef) {
 // geometric solution
 #if 0

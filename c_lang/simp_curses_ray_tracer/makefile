@@ -9,6 +9,7 @@ TARGET = ray_tracer.exe
 
 HDR = $(wildcard ./inc/*.h)
 
+
 # HDR = utils.h light_utils.h camera.h screen.h object.h material.h ray_tr_whitted.h kb_linux.h timer.h
 
 # headers
@@ -19,6 +20,7 @@ HDR = $(wildcard ./inc/*.h)
 OBJ = $(patsubst ./src/%.c, ./obj/%.o, $(wildcard ./src/*.c))
 
 obj/%.o: src/%.c $(HDR)
+	echo $(HDR)
 	$(CC) -c -o $@ $< $(CFLG) $(IFLG) $(LFLG)
 
 $(TARGET): $(OBJ)

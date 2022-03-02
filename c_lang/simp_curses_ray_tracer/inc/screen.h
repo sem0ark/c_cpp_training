@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 #include "utils.h"
+
 /* PIrint pixels to file */
 void pixels2file(options_t *options, V3f_t *pixels);
 /* Initialize ncurses creen */
