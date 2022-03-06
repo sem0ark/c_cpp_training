@@ -56,4 +56,3 @@ int cKeyboard_getKeyState(cKeyboard_t *kb, int key) {
 }
 
 #endif
-

@@ -2,7 +2,6 @@
 
 #include "camera.h"
 #include "utils.h"
-#include "ray_tracer.h"
 #include "light_utils.h"
 
 void get_ray(camera_t *cam, float inv_w, float inv_h, float asp_ratio, float char_ratio, int x, int y, ray_t *ray) {

@@ -101,7 +101,8 @@ V3f_t cast_ray(
 
       // loop over all lights
       for (int i=0; i<lights_size; i++) {
-        get_light_properties(lights[i], &hit_point, &shadow_ray.direction, &L2, &int_coef);
+        get_light_properties(lights[i], &hit_point,
+          &shadow_ray.direction, &L2, &int_coef);
         if (int_coef < 0.001) continue;
 
         V3f_t H_vec = normalize_v3(diff_v3(shadow_ray.direction, ray->direction));
@@ -126,7 +127,9 @@ V3f_t cast_ray(
       }
 
       obj_lighted_color = sum_v3(
-          mul_v3_v(diff_color, mul_v3_v(hit_object->com.material->d_col, eval_texture_color(hit_object->com.material, &st))),
+          mul_v3_v(diff_color,
+            mul_v3_v(hit_object->com.material->d_col,
+              eval_texture_color(hit_object->com.material, &st))),
           mul_v3_v(spec_color, hit_object->com.material->s_col));
     }
     return sum_v3(hit_color, obj_lighted_color);
@@ -153,8 +156,14 @@ void render(options_t *options, camera_t *camera, V3f_t *pixels,
 
       for (int dy=0; dy<options->aa_coef; dy++) {
         for (int dx=0; dx<options->aa_coef; dx++) {
-          get_ray(camera, inv_w, inv_h, img_asp_ratio, options->console_ch_ratio, x*options->aa_coef+dx - options->aa_coef/2, y*options->aa_coef + dy - options->aa_coef/2, &prime_ray);
-          cur_color = sum_v3(cur_color, cast_ray(&prime_ray, objects, obj_size, lights, lights_size, options, 0));
+          get_ray(camera, inv_w, inv_h,
+            img_asp_ratio, options->console_ch_ratio,
+            x*options->aa_coef+dx - options->aa_coef/2,
+            y*options->aa_coef + dy - options->aa_coef/2, &prime_ray);
+          cur_color = sum_v3(
+            cur_color,
+            cast_ray(&prime_ray, objects, obj_size,
+              lights, lights_size, options, 0));
         }
       }
 

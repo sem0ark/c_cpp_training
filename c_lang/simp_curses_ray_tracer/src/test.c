@@ -6,7 +6,7 @@
 #include "light_utils.h"
 #include "screen.h"
 #include "timer.h"
-#include "kb_linux.h"
+//#include "kb_linux.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -44,12 +44,12 @@ void test_whitted(void) {
   srand(time(NULL));
 
   options_t options = (options_t) {
-    .width = 400,
-    .height = 400,
-    .console_ch_ratio = 0.5f,
+    .width = 500,
+    .height = 500,
+    .console_ch_ratio = 1.0f,
     .aa_coef = 3,
     .fov = 40.0f,
-    .max_depth = 2,
+    .max_depth = 3,
     .background_color = v3f_s(0.1f),
     .ambient_occlusion = v3f_s(0.0f),
     .bias = 1e-4,
@@ -57,8 +57,8 @@ void test_whitted(void) {
 
 
   camera_t cam = {
-    .position = v3f(0, 0, 1),
-    .rotation = v3f(0,0,0),
+    .position = v3f(0, 1, 1.5f),
+    .rotation = v3f(M_PI/24.0f,0.1f,0),
     .fov = 45,
   };
   set_direction(&cam);
@@ -89,11 +89,11 @@ void test_whitted(void) {
   m2.rfr_col = mul_v3_f(obj_col_2, 1.0f);
   m2.s_col   = mul_v3_f(obj_col_2, 0.2f);
 
-  V3f_t obj_col_3 = v3f(0.8f, 0.6f, 0.6f);
+  V3f_t obj_col_3 = v3f_s(0.9);//v3f(0.8f, 0.6f, 0.6f);
   Material_t m3 = (Material_t){0};
   m3.type = DIFF_GLOSSY | REFLECT | REFRACT;
   m3.pattern_type = PLAIN;
-  m3.ior = 1.12f;
+  m3.ior = 1.4f;
   m3.specular_exp = 55.0f;
   m3.d_col   = mul_v3_f(obj_col_3, 0.2f);
   m3.e_col   = mul_v3_f(obj_col_3, 0.0f);
@@ -102,21 +102,21 @@ void test_whitted(void) {
   m3.s_col   = mul_v3_f(obj_col_3, 0.2f);
 
 
-  int Nl = 1;
+  int Nl = 3;
   light_t **lights = (light_t **)malloc(sizeof(light_t *)*Nl);
   for (int i=0; i<Nl; i++) lights[i] = (light_t *)malloc(sizeof(light_t) * 1);
 
   *lights[0] = (light_t){
-    .type = DIRECT,
-    .direction = normalize_v3(v3f(0.0f, 0.4f, -1.0f)),
-    .intensity = v3f_s(1.0f),//v3f(0.3f,0.3f,0.3f),
-    .position = v3f(0, 0, 100),
+    .type = POINT,
+    .direction = normalize_v3(v3f(0.4f, 0.4f, -1.0f)),
+    .intensity = v3f_s(1.0f),
+    .position = v3f(0, 0, 10),
     .kc = 1.0f,
     .kl = 0.0f,
     .kq = 0.0f,
-    .kp = 5.0f,
+    .kp = 15.0f,
   };
-/*
+
   *lights[1] = (light_t){
     .type = POINT,
     .direction = normalize_v3(v3f(0.0f, -0.4f, -1.0f)),
@@ -138,7 +138,7 @@ void test_whitted(void) {
     .kq = 0.01f,
     .kp = 25.0f
   };
-*/
+
   int No = 3;
   object_t **objects = (object_t **)malloc(sizeof(object_t *)*No);
   for (int i=0; i<No; i++) objects[i] = (object_t *)malloc(sizeof(object_t) * 1);
@@ -156,8 +156,8 @@ void test_whitted(void) {
     .o_sphr = (sphere_t) {
       .type = SPHERE,
       .material = &m2,
-      .center = v3f(7,0,2),
-      .radius = 1.0f,
+      .center = v3f(5,2.5f,1),
+      .radius = 0.5f,
     }
   };
 
@@ -170,6 +170,7 @@ void test_whitted(void) {
       .radius = 1.0f,
     }
   };
+
 
 /*
   for (int i=1; i < No; i++) {
@@ -187,56 +188,55 @@ void test_whitted(void) {
   V3f_t *pixels = (V3f_t *)malloc(options.width * options.height * sizeof(V3f_t));
 
   /* show picture flie*/
-/*
   render(&options, &cam, pixels, objects, No, lights, Nl);
   pixels2file(&options, pixels);
-*/
 
-  /* ASCII animation */
-  double dt;
-  double fps = 24.0;
 
-  cTimer_t timer;
-  cTimer_init(&timer);
+//   /* ASCII animation */
+//   double dt;
+//   double fps = 24.0;
 
-  // cKeyboard_t kb;
-  // cKeyboard_init(&kb);
+//   cTimer_t timer;
+//   cTimer_init(&timer);
 
-  double mov_spd = 3;
-  double rot_spd = M_PI * 0.5;
+//   // cKeyboard_t kb;
+//   // cKeyboard_init(&kb);
 
-  double min_dt = 1.0/fps;
-  int running = 1;
-  init_screen(&options);
+//   double mov_spd = 3;
+//   double rot_spd = M_PI * 0.5;
 
-  while (running) {
-    /*cur_time = clock();
-    dt = (cur_time - prev_time) * 1.0 / CLOCKS_PER_SEC;
-    if (dt < min_dt) continue;*/
-    dt = cTimer_elapsed(&timer, 1);
+//   double min_dt = 1.0/fps;
+//   int running = 1;
+//   init_screen(&options);
 
-    // if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += dt * rot_spd; }
-    // if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= dt * rot_spd; }
-    // if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += dt * rot_spd; }
-    // if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= dt * rot_spd; }
+//   while (running) {
+//     /*cur_time = clock();
+//     dt = (cur_time - prev_time) * 1.0 / CLOCKS_PER_SEC;
+//     if (dt < min_dt) continue;*/
+//     dt = cTimer_elapsed(&timer, 1);
 
-    // if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
-/*
-    if (cKeyboard_getKeyState(&kb, KEY_W)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, dt * mov_spd)); }
-    if (cKeyboard_getKeyState(&kb, KEY_S)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd)); }
-    if (cKeyboard_getKeyState(&kb, KEY_A)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, -dt * mov_spd)); }
-    if (cKeyboard_getKeyState(&kb, KEY_D)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, dt * mov_spd)); }
-*/
-    set_direction(&cam);
+//     // if (cKeyboard_getKeyState(&kb, KEY_U)) { cam.rotation.y += dt * rot_spd; }
+//     // if (cKeyboard_getKeyState(&kb, KEY_J)) { cam.rotation.y -= dt * rot_spd; }
+//     // if (cKeyboard_getKeyState(&kb, KEY_H)) { cam.rotation.x += dt * rot_spd; }
+//     // if (cKeyboard_getKeyState(&kb, KEY_K)) { cam.rotation.x -= dt * rot_spd; }
 
-    render(&options, &cam, pixels, objects, No, lights, Nl);
-    print_screen(&options, pixels);
+//     // if (cKeyboard_getKeyState(&kb, KEY_Q)) { running = 0; }
+// /*
+//     if (cKeyboard_getKeyState(&kb, KEY_W)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, dt * mov_spd)); }
+//     if (cKeyboard_getKeyState(&kb, KEY_S)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.fwd, -dt * mov_spd)); }
+//     if (cKeyboard_getKeyState(&kb, KEY_A)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, -dt * mov_spd)); }
+//     if (cKeyboard_getKeyState(&kb, KEY_D)) { cam.position = sum_v3(cam.position, mul_v3_f(cam.rgt, dt * mov_spd)); }
+// */
+//     set_direction(&cam);
 
-  }
+//     render(&options, &cam, pixels, objects, No, lights, Nl);
+//     print_screen(&options, pixels);
 
-  shut_down();
+//   }
+
+//   shut_down();
   
-  // cKeyboard_shutdown(&kb);
+//   // cKeyboard_shutdown(&kb);
 
   for (int i=0; i<Nl; i++) free(lights[i]);
   free(lights);
@@ -248,10 +248,10 @@ void test_whitted(void) {
 }
 
 void test_matrix(void) {
-M44d_t s = m44d(    0.707107,  0,        -0.707107, 0,
-                    -0.331295, 0.883452, -0.331295, 0,
-                    0.624695,  0.468521, 0.624695,  0,
-                    4.000574,  3.00043,  4.000574,  1);
+M44d_t s = m44d(0.707107,  0,        -0.707107, 0,
+                -0.331295, 0.883452, -0.331295, 0,
+                0.624695,  0.468521, 0.624695,  0,
+                4.000574,  3.00043,  4.000574,  1);
   show_m44d(&s);
   M44d_t res = inv_mat44d(s);
   show_m44d(&res);

@@ -39,7 +39,8 @@ int intersect_disk(object_t *obj, ray_t *ray, float *intsct_coef) {
   if (fabsf(den) > 1e-6){
     *intsct_coef = dot_v3(
         diff_v3(obj->o_pln.center, ray->origin),
-        obj->o_pln.norm) / den;
+        obj->o_pln.norm)
+      / den;
     float d2 = len_sq_v3(
         diff_v3(
           sum_v3(ray->origin,

@@ -20,15 +20,15 @@ HDR = $(wildcard ./inc/*.h)
 OBJ = $(patsubst ./src/%.c, ./obj/%.o, $(wildcard ./src/*.c))
 
 obj/%.o: src/%.c $(HDR)
-	echo $(HDR)
 	$(CC) -c -o $@ $< $(CFLG) $(IFLG) $(LFLG)
 
 $(TARGET): $(OBJ)
 	$(CC) -o $(TARGET) $^ $(CFLG) $(IFLG) $(LFLG)
 
 run: $(TARGET)
-	sudo ./$(TARGET)
+	./$(TARGET)
 
 .PHONY: clear
 clear:
-	rm -f $(TARGET) $(OBJ)
+	del $(TARGET)
+	rmdir /s ./obj

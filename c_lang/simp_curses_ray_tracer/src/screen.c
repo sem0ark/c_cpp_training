@@ -1,32 +1,34 @@
-
-int len = 9;
-char *brightness = " .:+=*#%@";
-
-
-#ifdef __linux__
-
 #include <stdio.h>
 #include <stdlib.h>
 //#include <ncurses.h>
 
 #include "utils.h"
 
-void pixels2file(options_t *options, V3f_t *pixels) {
+void pixels2file(options_t *options, V3f_t *pixels)
+{
   FILE *fp;
   int n_pix = options->width * options->height;
-  char *ppm = (char*)malloc(sizeof(char) * n_pix);
+  unsigned char *ppm = (unsigned char *)malloc(sizeof(unsigned char) * n_pix);
   fp = fopen("test1.ppm", "w");
-  fprintf(fp, "P6 %d %d %d\n",  options->width, options->height, 255);
-  for (int c=0; c<n_pix; c++) {
-    pixels[c] = clamp_v3(pixels[c], 0.0f, 1.0f);
-    fprintf(fp, "%c%c%c", (char)(pixels[c].x*255.0),
-      (char)(pixels[c].y*255.0), (char)(pixels[c].z*255.0));
+  fprintf(fp, "P6\n%d %d\n%d\n", options->width, options->height, 255);
+  for (int c = 0; c < n_pix; c++)
+  {
+    pixels[c] = clamp_v3(pixels[c], 0.05f, 1.0f);
+    fprintf(fp, "%c%c%c", (unsigned char)(pixels[c].x * 255.0),
+            (unsigned char)(pixels[c].y * 255.0),
+            (unsigned char)(pixels[c].z * 255.0));
   }
   fclose(fp);
   free(ppm);
 }
 
-void init_screen(options_t *options) {
+int len = 9;
+char *brightness = " .:+=*#%@";
+
+#ifdef __linux__
+
+void init_screen(options_t *options)
+{
   initscr();
   clear();
   noecho();
@@ -35,25 +37,42 @@ void init_screen(options_t *options) {
   getmaxyx(stdscr, options->height, options->width);
 }
 
-void print_screen(options_t *options, V3f_t *pixels) {
-  move(0,0);
+void print_screen(options_t *options, V3f_t *pixels)
+{
+  move(0, 0);
   int c = options->height * options->width;
   V3f_t *pix = pixels;
-  for (int i=0; i<c; i++) {
+  for (int i = 0; i < c; i++)
+  {
     float l = sqrt(len_sq_v3(*pix) / 3.0f);
-    putc(brightness[(int)CLAMP(len * l, 0, len-1)]);
+    putc(brightness[(int)CLAMP(len * l, 0, len - 1)]);
     pix++;
   }
 
   refresh();
 }
 
-void shut_down(void) {
+void shut_down(void)
+{
   endwin();
 }
 
 #endif
 
 #ifdef _WIN32
+#include <math.h>
+#include <windows.h>
+
+void init_screen(options_t *options)
+{
+}
+
+void print_screen(options_t *options, V3f_t *pixels)
+{
+}
+
+void shut_down(void)
+{
+}
 
 #endif
