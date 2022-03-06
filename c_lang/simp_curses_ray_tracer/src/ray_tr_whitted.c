@@ -84,7 +84,8 @@ V3f_t cast_ray(
           mul_v3_f(mul_v3_v(refr_color, hit_object->com.material->rfr_col), (1-kr)),
           mul_v3_f(mul_v3_v(refl_color, hit_object->com.material->rfl_col), kr)));
     } else {
-      hit_color = sum_v3(hit_color, mul_v3_v(refl_color, hit_object->com.material->rfl_col));
+      hit_color = sum_v3(hit_color,
+        mul_v3_v(refl_color, hit_object->com.material->rfl_col));
     }
 
     if (hit_object->com.material->type & DIFF_GLOSSY) {
