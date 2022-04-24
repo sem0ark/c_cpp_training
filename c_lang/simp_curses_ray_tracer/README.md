@@ -1,8 +1,28 @@
-## Descripton
+## Description
+This projects is an implementation of Whitted raytracing algorithm for 3D graphics. The code was inspired by [this site](https://www.scratchapixel.com/).
+This program can be compiled make with makefile. Used compiler - GCC.
+```
+make run
+```
 
-It's simple ray-tracer, created by sem0rk.
-Inspired by [this guide](https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work).
+## Implementation
+In this program implemented:
+- Multiple light source color lighting
+- Specular and diffuse lighting
+- Reflection
+- Refraction and Fernel coefficient
+- Anti-aliasing
 
-# Dependecies
+Implemented objects:
+- Sphere
+- Plane
 
-It's using `ncurses` library.
+Implemented light sources:
+- Dot light
+- Spot light
+- Direct light
+
+The program will generate PPM file with picture. By now parameters can be configured through code.
+
+## Dependencies
+It uses ncurses library.
