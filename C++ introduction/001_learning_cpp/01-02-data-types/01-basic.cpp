@@ -42,7 +42,16 @@ float: 23.0f, 0.0f
 double: 23.4, -22.5
 char: 'a', 'X, '\0', '\n'
 string: "hi there"
+auto: predicts needed type, must init with declaration
 
+==================================
+
+Popular operations
+Arithmetic: + - * / %
+Bitwise: & | ~ ^ << >>
+Logical: && || !
+Relational: == != < > <= >=
+Pointer: * & ->
 */
 
 // global variables
@@ -52,6 +61,14 @@ int a, b=5;
 /* Multi
 *  line 
 *  comment */
+
+auto a1 = 8;
+auto b1 = 12345678901;
+auto c = 3.14f;
+auto d = 3.14;
+auto e = true;
+auto f = 'd';
+
 
 int main() {
   bool flag; // single line comment
@@ -70,7 +87,14 @@ int main() {
   unsigned int pos;
   pos = b - a;
 
-  std::cout << "b - a (unsigned) = " << pos << std::endl;
+  std::cout << "b - a (unsigned) = " << pos << std::endl << std::endl;
+
+  std::cout << typeid(a1).name() << std::endl;
+  std::cout << typeid(b1).name() << std::endl;
+  std::cout << typeid(c).name() << std::endl;
+  std::cout << typeid(d).name() << std::endl;
+  std::cout << typeid(e).name() << std::endl;
+  std::cout << typeid(f).name() << std::endl;
 
   return 0;
 }
