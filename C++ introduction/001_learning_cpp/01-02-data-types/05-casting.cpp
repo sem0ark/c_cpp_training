@@ -13,6 +13,21 @@ uint32_t unsgn;
 // in inline type casting with numerical values we would get
 // casting: int -> float -> double
 
+void find_average() {
+  // Challenge solution to the
+  // Challenge: Calculate an Average
+
+  int arr[] = {1, 2, 3, 4, 5};
+  
+  int sm = 0;
+  for (int i=0; i<5; i++) {
+    sm += arr[i];
+  }
+
+  float avg = sm / 5.0f;
+  std::cout << "Average value: " << avg << std::endl;
+}
+
 int main() {
   // these are examples of internal type casting
   sgn = flt; // the value is preserved -> -7.44 goes to -7
@@ -35,6 +50,8 @@ int main() {
   std::cout << "Float: " << weight << std::endl;
   std::cout << "Int part: " << (int) weight << std::endl;
   std::cout << "Frac part: "<< weight - (int)weight << std::endl;
+
+  find_average();
 
   return 0;
 }
