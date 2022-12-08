@@ -105,25 +105,39 @@ std::vector<Grade> grades = {
   Grade(2,4,'B')
 };
 
+class Recorder{
+public:
+  void add_student(Student& student) { students.push_back(student); }
+  void add_student(Course& course)   { courses.push_back(course); }
+  void add_student(Grade& grade)     { grades.push_back(grade); }
 
-float get_gpa(int student_id) {
-  float points  = 0.0f;
-  float credits = 0.0f;
-
-  for(auto& grd: grades) {
-    if(grd.get_student_id() != student_id) continue;
-
-    for(auto& crs : courses) {
-      if(crs.get_id() == grd.get_course_id()) {
-        credits += crs.get_points();
-        points  += grade2f(grd.get_grade()) * crs.get_points();
-        break;
-      }
-    }
+  void student_report(int student_id) {
+    
   }
 
-  return points / credits;
-}
+  float get_gpa(int student_id) {
+    float points  = 0.0f;
+    float credits = 0.0f;
+
+    for(auto& grd: grades) {
+      if(grd.get_student_id() != student_id) continue;
+
+      for(auto& crs : courses) {
+        if(crs.get_id() == grd.get_course_id()) {
+          credits += crs.get_points();
+          points  += grade2f(grd.get_grade()) * crs.get_points();
+          break;
+        }
+      }
+    }
+
+    return points / credits;
+  }
+private:
+  std::vector<Student> students;
+  std::vector<Course> courses;
+  std::vector<Grade> grades;
+};
 
 
 int main() {
