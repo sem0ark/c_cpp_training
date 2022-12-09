@@ -1,4 +1,4 @@
-1209 jabberwocky
-ado 12 test
-monk s 289 ds
-p
+a = 4.333
+b = 5.302
+a + b = 9.635
+a * b = 22.9736
