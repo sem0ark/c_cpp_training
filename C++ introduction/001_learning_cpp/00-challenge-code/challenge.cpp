@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 class Student {
 public:
@@ -87,34 +88,116 @@ float grade2f(char grd) {
 
 class Recorder{
 public:
+  Recorder(
+    std::ifstream& in_stream,
+    std::string& fn_students,
+    std::string& fn_courses,
+    std::string& fn_grades)
+  {
+    parse_students(in_stream, fn_students);
+    parse_courses(in_stream, fn_courses);
+    parse_grades(in_stream, fn_grades);
+  }
+
+  void parse_students(std::ifstream& in_stream, std::string fn) {
+    std::string str, name;
+    int sid, count;
+
+    in_stream.open(fn);
+    if(in_stream.fail()) {
+      std::cout << "Couldn't open file : " << fn << std::endl;
+    } else {
+      while(!in_stream.eof()) {
+        getline(in_stream, str);
+        sid = stoi(str);
+        getline(in_stream, str);
+        name = str;
+        add_student(Student(sid, name));
+        count++;
+        
+        // std::cout << sid << name << std::endl;
+      }
+    }
+    in_stream.close();
+    std::cout << "Found " << count << " students" << std::endl;
+  }
+
+  void parse_courses(std::ifstream& in_stream, std::string fn) {
+    std::string str, name;
+    int cid, points, count;
+
+    in_stream.open(fn);
+    if(in_stream.fail()) {
+      std::cout << "Couldn't open file : " << fn << std::endl;
+    } else {
+      while(!in_stream.eof()) {
+        getline(in_stream, str);
+        cid = stoi(str);
+        getline(in_stream, str);
+        name = str;
+        getline(in_stream, str);
+        points = stoi(str);
+        add_course(Course(cid, name, points));
+        count++;
+        
+        // std::cout << cid << name << points << std::endl;
+      }
+    }
+    in_stream.close();
+    std::cout << "Found " << count << " courses" << std::endl;
+  }
+
+  void parse_grades(std::ifstream& in_stream, std::string fn) {
+    std::string str;
+    char grade;
+    int sid, cid, count;
+
+    in_stream.open(fn);
+    if(in_stream.fail()) {
+      std::cout << "Couldn't open file : " << fn << std::endl;
+    } else {
+      while(!in_stream.eof()) {
+        getline(in_stream, str);
+        sid = stoi(str);
+        getline(in_stream, str);
+        cid = stoi(str);
+        getline(in_stream, str);
+        grade = str[0];
+        add_grade(Grade(sid, cid, grade));
+        count++;
+        
+        // std::cout << sid << cid << grade << std::endl;
+      }
+    }
+    in_stream.close();
+    std::cout << "Found " << count << " grades" << std::endl;
+  }
+
   void add_student(Student student) { students.push_back(student); }
   void add_course(Course course)    { courses.push_back(course); }
   void add_grade(Grade grade)       { grades.push_back(grade); }
 
-  void student_report(int student_id) {
-    int student_ind = 0;
-    while(students[student_ind].get_id() != student_id) student_ind++;
+  void student_report(std::ofstream& out_stream, std::string fn) {
+    out_stream.open(fn);
 
-    if(student_ind == students.size()) return;
+    for(auto& st : students) {
+      out_stream << "Student name: " << st.get_name() << std::endl;
+      out_stream << "Picked courses: " << std::endl;
 
-    std::cout << "Student name: " << students[student_ind].get_name() << std::endl;
-    std::cout << "Picked courses: " << std::endl;
-
-    for(auto& crs : courses) {
-      bool picked = false;
-      for(auto& grd : grades) {
-        if (grd.get_course_id() == crs.get_id() &&
-            grd.get_student_id() == students[student_ind].get_id()) {
-          picked = true;
-          break;
+      for(auto& crs : courses) {
+        for(auto& grd : grades) {
+          if (grd.get_course_id() == crs.get_id() &&
+              grd.get_student_id() == st.get_id()) {
+            out_stream << crs.get_name() << ": " << grd.get_grade() << std::endl;
+            break;
+          }
         }
       }
-      if(picked) {
-        std::cout << crs.get_name() << std::endl;
-      }
+      out_stream << "GPA: " << get_gpa(st.get_id()) << std::endl;
+      out_stream << "=================================================" << std::endl;
     }
-    std::cout << "GPA: " << get_gpa(student_id) << std::endl;
-
+    
+    out_stream.close();
   }
 
   float get_gpa(int student_id) {
@@ -141,28 +224,16 @@ private:
   std::vector<Grade> grades;
 };
 
-Recorder rec = Recorder();
+std::ifstream inFile;
+std::ofstream outFile;
 
 int main() {
+  std::string fns = "students.txt";
+  std::string fnc = "courses.txt";
+  std::string fng = "grades.txt";
+  std::string fnr = "report.txt";
 
-  
-  rec.add_student(Student(1,"George P. Burdell"));
-  rec.add_student(Student(2,"Nancy Rhodes"));
-
-  rec.add_course(Course(1,"Algebra",5));
-  rec.add_course(Course(2,"Physics",4));
-  rec.add_course(Course(3,"English",3));
-  rec.add_course(Course(4,"Economics",4));
-
-  
-  rec.add_grade(Grade(1,1,'B'));
-  rec.add_grade(Grade(1,2,'A'));
-  rec.add_grade(Grade(1,3,'C'));
-  rec.add_grade(Grade(2,1,'A'));
-  rec.add_grade(Grade(2,2,'A'));
-  rec.add_grade(Grade(2,4,'B'));
-
-  rec.student_report(1);
-
+  Recorder *rec = new Recorder(inFile, fns, fnc, fng);
+  rec->student_report(outFile, fnr);
   return 0;
 }
