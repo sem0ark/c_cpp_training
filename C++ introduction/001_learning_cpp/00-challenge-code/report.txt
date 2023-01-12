@@ -1,0 +1,14 @@
+Student name: George P. Burdell
+Picked courses: 
+Algebra: B
+Physics: A
+English: C
+GPA: 3.08333
+=================================================
+Student name: Nancy Rhodes
+Picked courses: 
+Algebra: A
+Physics: A
+Economics: B
+GPA: 3.69231
+=================================================
