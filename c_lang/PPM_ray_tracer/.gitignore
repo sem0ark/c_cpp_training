@@ -1,0 +1,8 @@
+*.o
+*.exe
+*.ppm
+!bg.ppm
+*.todo
+obj/
+lib/
+.vscode
