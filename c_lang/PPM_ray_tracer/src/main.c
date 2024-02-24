@@ -15,10 +15,10 @@ int main(int argc, char *argv[]) {
   srand(time(NULL));
 
   options_t options = (options_t) {
-    .width = 1200,
-    .height = 1200,
+    .width = 200,
+    .height = 200,
     .console_ch_ratio = 1.0f,
-    .aa_coef = 5,
+    .aa_coef = 10,
     .fov = 40.0f,
     .max_depth = 4,
     .background_color = v3f_s(0.1f),

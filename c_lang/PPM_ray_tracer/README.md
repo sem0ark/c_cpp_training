@@ -1,5 +1,5 @@
 ## Description
-[img](./bg.ppm)
+![img](./bg.ppm)
 
 This projects is an implementation of Whitted raytracing algorithm for 3D graphics. The code was inspired by [this site](https://www.scratchapixel.com/).
 This program can be compiled make with makefile. Used compiler - GCC.
