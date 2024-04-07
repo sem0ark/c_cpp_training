@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
   srand(time(NULL));
 
   options_t options = (options_t) {
-    .width = 200,
-    .height = 200,
+    .width = 800,
+    .height = 800,
     .console_ch_ratio = 1.0f,
     .aa_coef = 10,
     .fov = 40.0f,
